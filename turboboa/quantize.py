@@ -371,7 +371,8 @@ def save_layer_dump(args, block_idx, name, dump, wall):
     key = f"layers.{block_idx:02d}.{name}"
     codes = dump['q4'] if 'q4' in dump else dump['q']
     out = dict(codes=codes.numpy(), scale=dump['scale'].numpy().astype(np.float32), zero=dump['zero'].numpy(), bits=np.int64(dump['bits']),
-               zero_bits=np.int64(dump.get('zero_bits', 3 if 'q4' in dump else dump['bits'])))
+               zero_bits=np.int64(dump.get('zero_bits', 3 if 'q4' in dump else dump['bits'])),
+               n_qparams=np.int64(1 if dump.get('per_tensor') else dump['scale'].numel()))
     row = dict(layer=key, d_out=int(codes.shape[0]), d_in=int(codes.shape[1]), wall=round(wall, 2), bits=int(dump['bits']))
     if 'refine' in dump:
         refine = dump['refine'].numpy()

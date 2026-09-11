@@ -38,6 +38,9 @@ class TurboBoA:
 
         # --- nested-lattice refinement (flag-guarded; None => stock TurboBoA path) ---
         self.nested = opts.get('nested', None)
+        # --- per-tensor qparams (flag-guarded; False => stock per-row / per-group search) ---
+        self.per_tensor = opts.get('per_tensor', False)
+        self.fixed_qparam = None    # (scale, zero) scalars used for every row/group when per_tensor
         self.nested_mask = None     # arm A: bool [d_out, d_in]
         self.nested_fisher = None   # arm D: float [d_out, d_in]
         self.dump = {}              # integer codes / qparams / logs collected for the rate script
@@ -56,6 +59,11 @@ class TurboBoA:
         U_in = get_cholesky_of_inverse(H_in)
         P = (dXXT @ U_in.transpose(-1, -2)).triu(diagonal=1) @ U_in if dXXT is not None else None 
         
+        if self.per_tensor:
+            assert self.quantizer.group_size == -1, "per-tensor qparams require --group_size -1"
+            assert not self.refine_qparam, "per-tensor qparams: --refine_qparam would re-fit per-row scales after the solve; run without it"
+            self.fixed_qparam = self.find_params_tensor(W, H_in)
+            self.dump['per_tensor'] = True
         if self.nested is not None:
             assert not self.act_order_col and not self.act_order_row, "nested path: act-order permutation of the mask not implemented"
             assert self.quantizer.maxq.item() in (3, 7), "nested path: coarse grid must be --w_bits 2 or 3"
@@ -114,6 +122,41 @@ class TurboBoA:
         self.quantizer.zero = zero.reshape(self.quantizer.zero.shape).to(device="cuda:0")
 
 
+    def find_params_tensor(self, W, H_in):
+        """One (scale, zero) for the whole tensor: tensor-wide min/max, the same shrink grid search as the per-row
+        search (quantizers/minmax.py + utils/quant_utils.grid_search), scored by the Hessian-weighted error summed over
+        all heads/rows (MinMax / MMSE: plain L2 / L_norm summed). W: [nh, rows, 1, d]; H_in: [nH, d, d] (damped)."""
+        assert W.shape[-2] == 1
+        Wf = W[..., 0, :]                                    # [nh, rows, d]
+        maxq = self.quantizer.maxq.to(W.device)
+        w_min = torch.minimum(Wf.min(), torch.zeros((), device=W.device))
+        w_max = torch.maximum(Wf.max(), torch.zeros((), device=W.device))
+        if self.quantizer.sym:
+            w_max = torch.maximum(-w_min, w_max); w_min = -w_max
+        best = (None, None, float('inf'))
+        for i in range(self.quantizer.grid):
+            p = 1 - i / self.quantizer.grid
+            lo, hi = p * w_min, p * w_max
+            scale = (hi - lo) / maxq
+            for rnd in ("floor", "ceil"):
+                if self.quantizer.sym:
+                    zero = torch.full_like(scale, ((maxq + 1) / 2).item())
+                else:
+                    zero = torch.floor(-lo / scale) if rnd == "floor" else torch.ceil(-lo / scale)
+                e = fake_quantize(Wf, scale, zero, maxq) - Wf
+                if self.qparam_comput == "Hessian":
+                    score = torch.sum((e @ H_in) * e).item()
+                elif self.qparam_comput == "MMSE":
+                    score = e.abs().pow(self.quantizer.norm).sum().item()
+                else:  # MinMax: no search
+                    return scale.reshape(1, 1, 1), zero.reshape(1, 1, 1)
+                if score < best[2]:
+                    best = (scale.reshape(1, 1, 1), zero.reshape(1, 1, 1), score)
+                if self.quantizer.sym:
+                    break
+        return best[0], best[1]
+
+
     def gptq(self, W, H_in, U_in, P, row_w=None, row_slice=slice(None)):
         org_shape = W.shape
         n_groups, group_size = org_shape[-2], org_shape[-1]
@@ -130,7 +173,11 @@ class TurboBoA:
         scale, zero = torch.ones((*W.shape[:-1], 1), device=W.device), torch.zeros((*W.shape[:-1], 1), device=W.device)
         for idx_group in range(n_groups):
             c_start = idx_group * group_size
-            if self.qparam_comput == "MinMax":
+            if self.fixed_qparam is not None:   # per-tensor: one (scale, zero) for every row and group
+                s_t, z_t = self.fixed_qparam
+                scale_group = s_t.expand(*W.shape[:-2], 1).clone()
+                zero_group = z_t.expand(*W.shape[:-2], 1).clone()
+            elif self.qparam_comput == "MinMax":
                 scale_group, zero_group = self.quantizer.find_params_H(W[..., idx_group, :], None, search=False)
             elif self.qparam_comput == "MMSE":
                 scale_group, zero_group = self.quantizer.find_params_H(W[..., idx_group, :], None, search=True)

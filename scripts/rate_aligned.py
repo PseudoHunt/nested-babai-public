@@ -12,12 +12,12 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from rate import huffman_lengths
 
 
-def aligned_tensor(codes, scale, zero, bits, zero_bits, group_size=128):
+def aligned_tensor(codes, scale, zero, bits, zero_bits, group_size=128, n_qparams=None):
     n = codes.size
     z = zero.astype(np.int64)
     if zero_bits < bits:            # nested path: stored zero is the coarse one, dequant zero is 2*z_c
         z = 2 * z
-    sym = codes.astype(np.int64) - np.repeat(z, group_size, axis=1)
+    sym = codes.astype(np.int64) - np.repeat(z, codes.shape[1] // z.shape[1], axis=1)
     off = 2 ** bits - 1
     nsym = 2 * off + 1
     counts = np.bincount((sym + off).reshape(-1), minlength=nsym)[:nsym]
@@ -27,7 +27,7 @@ def aligned_tensor(codes, scale, zero, bits, zero_bits, group_size=128):
     L = huffman_lengths(counts)
     huff = float(sum(counts[i] * L[i] for i in L))
     table = nsym * 4
-    side = scale.size * (16 + zero_bits)
+    side = (scale.size if n_qparams is None else int(n_qparams)) * (16 + zero_bits)
     return dict(entropy_per_code=ent / n, huffman_per_code=huff / n,
                 ideal_bpw=(ent + table + side) / n, huffman_bpw=(huff + table + side) / n, n=int(n),
                 hist=counts.tolist(), offset=int(off))
@@ -45,7 +45,7 @@ def main():
         for f in files:
             d = np.load(f)
             zb = int(d["zero_bits"]) if "zero_bits" in d else (3 if int(d["bits"]) in (3, 4) and int(d["zero"].max()) <= 7 else int(d["bits"]))
-            r = aligned_tensor(d["codes"], d["scale"], d["zero"], int(d["bits"]), zb)
+            r = aligned_tensor(d["codes"], d["scale"], d["zero"], int(d["bits"]), zb, n_qparams=int(d["n_qparams"]) if "n_qparams" in d else None)
             key = os.path.basename(f)[:-4]
             per[key] = r
             tot["n"] += r["n"]; tot["ideal"] += r["ideal_bpw"] * r["n"]; tot["huff"] += r["huffman_bpw"] * r["n"]

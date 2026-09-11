@@ -3,7 +3,7 @@
 **Status:** Phases 0–2 done; Phase 3 done for seeds 0 and 1 (seed 2 deferred by the PI on 2026-09-11 in favour of the
 2→3-bit experiment, which is done: seed 0, C 36.1 < B 37.3 ≪ A 71.1 at matched rate). **Interim verdict on 2 seeds: PASS** — μ_C − μ_A = **−0.120** wiki2 PPL at matched
 Huffman rate (threshold −max(2σ, 0.05) = −0.05, pooled σ = 0.010); μ_B − μ_A = −0.088 (also beyond the threshold).
-Paper draft in `paper/`.
+Paper draft in `paper/`. Extra experiments on PI request: 2→3 bit (in-loop wins by 2×), zero-alignment coding (−0.03 bpw only), per-tensor scale (mixed, see section).
 
 ## §6 result table (A100, TurboBoA g=128, matched Huffman rate R1 = 3.071 ± 0.02)
 | Arm | p / λ | seed | nominal bpw | ideal bpw | Huffman bpw | wiki2 PPL | c4-new PPL | quant time |
@@ -155,6 +155,28 @@ scale choice (a distortion-optimal, rate-blind trade-off), not by the coder. Low
 entropy-constrained scale search (larger scale → peakier histogram → lower rate at some MSE cost), which is a change to the
 quantizer, outside the current brief — a candidate follow-up, not a bug in the accounting.
 
+## Per-tensor scale experiment (3→4 bit, seed 0, PI request 2026-09-11)
+One (scale, zero) per weight matrix (`--per_tensor --group_size -1`, no `refine_qparam`): tensor-wide min/max, the solver's
+shrink grid search scored by the Hessian-weighted error summed over all rows, fixed (s, z) in the column loop. Side info
+≈ 0 bpw, so rate = code entropy. Unit test: coarse-only endpoint bit-identical to the native per-tensor solve.
+
+| run | wiki2 PPL | c4-new PPL | ideal bpw | Huffman bpw | refined % |
+|---|---|---|---|---|---|
+| native W3 per-tensor (`pt_w3_s0`) | **65.03** | 294.9 | 2.454 | 2.520 | — |
+| A, Fisher top-1 % (`pt_A_p1_s0`) | **41.98** | 176.4 | 2.485 | **2.550 = R1(pt)** | 1.00 (odd 0.49 %, free 51.1 %) |
+| B, in-loop top-k, p = 1 % (`pt_B_p1_s0`) | **43.80** | **145.2** | 2.503 | 2.567 (R1 + 0.017) | 1.00 |
+
+Per-tensor verdict (seed 0, matched Huffman rate): **mixed** — Fisher is 1.8 PPL better on wiki2 (41.98 vs 43.80) while
+in-loop is 31 PPL better on c4-new (145.2 vs 176.4); B's Shannon rate is +0.018 bpw above A's. Both are far from usable
+(native g=128 W3 is 12.0), and at PPL ≈ 40 a single seed cannot separate a 1.8-PPL wiki2 difference from calibration
+noise, whereas the c4 gap is large. The in-loop rule's advantage is therefore not universal at every operating point: at
+g=128 (3→4 and 2→3) it wins on both metrics; with one scale per matrix the wiki2 ordering flips while c4 still favours
+in-loop. Arm C, endpoints, native W4 and seeds 1/2 were not run for this configuration (time budget).
+
+Per-tensor 3-bit is far worse than g=128 (65.0 vs 12.0): one range per matrix cannot serve outlier rows. Its code entropy
+is *lower* (2.45 vs 2.82 bits/code) because the single wide scale makes the histogram peaky — a clean illustration that a
+low-entropy stream is not the same as a good quantizer.
+
 ## Setup (fixed for all runs)
 - Model `unsloth/Llama-3.2-1B` (byte-identical mirror of `meta-llama/Llama-3.2-1B`), bf16. FP16/bf16 wiki2 PPL (ctx 2048) = **9.751** (paper 9.74).
 - Solver: TurboBoA at its README defaults for Llama + `g=128`: `--block_v --n_quant_rows 16 --consider_dX --alpha .25 --adaptive_qparam --refine_qparam --qparam_comput Hessian`, damping 1 %, `act_order_col` (forced off by TurboBoA for `group_size != -1`) and `act_order_row` off. `refine_qparam` is a no-op for grouped quantization in the released code ("NOT supported for group-wise quantization yet"), so no scale re-search happens after the column loop starts.
@@ -194,6 +216,9 @@ quantizer, outside the current brief — a candidate follow-up, not a bug in the
 | b2_w2_s0 | native W2 | — | 0 |  | 2.141 | 2.099 | 2.141 | 109.221 | 233.458 | 1139 |
 | e3_s0 | E3 (coarse only) [3→4] | λ=∞ | 0 |  | 4.148 | 2.966 | 2.996 | 12.011 | 20.115 | 1205 |
 | e4_s0 | E4 (all fine) [3→4] | λ=0 | 0 | 100.00 | 4.148 | 3.946 | 3.982 | 10.533 | 16.346 | 1092 |
+| pt_A_p1_s0 | A [3→4] | p=0.01 | 0 | 1.00 | 4.000 | 2.485 | 2.550 | 41.978 | 176.365 | 987 |
+| pt_B_p1_s0 | B [3→4] | p=0.01 | 0 | 1.00 | 4.000 | 2.503 | 2.567 | 43.798 | 145.209 | 1204 |
+| pt_w3_s0 | native W3 | — | 0 |  | 3.000 | 2.454 | 2.520 | 65.031 | 294.899 | 805 |
 | w3_s0 | native W3 | — | 0 |  | 3.148 | 2.966 | 2.996 | 12.011 | 20.115 | 1059 |
 | w3_s0_a30 | native W3 | — | 0 |  | 3.148 | 2.966 | 2.996 | 12.034 | 20.146 | 1307 |
 | w4_s0 | native W4 | — | 0 |  | 4.156 | 3.875 | 3.902 | 10.224 | 15.428 | 892 |

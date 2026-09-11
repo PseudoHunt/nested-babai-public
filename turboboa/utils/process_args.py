@@ -47,6 +47,7 @@ def get_turboboa_arguments(**parser_kwargs):
     parser.add_argument('--fisher_path', type=str, default=None, help='diagonal Fisher .pt (arms A, D)')
     parser.add_argument('--dump_dir', type=str, default=None, help='per-run output dir (codes, logs, result.json)')
     parser.add_argument('--log_percol', action='store_true', help='also store per-element gain/N_l (float16) in the dump')
+    parser.add_argument('--per_tensor', action='store_true', help='one scale/zero per weight tensor (requires --group_size -1, no --refine_qparam)')
     
     # LM Eval Arguments
     parser.add_argument("--lm_eval", action="store_true", help="Evaluate the model on LM Eval tasks.")
@@ -88,6 +89,7 @@ def get_turboboa_weight_quant_infos(args):
         "alpha": args.alpha,
         'act_order_col': args.act_order_col, 
         'act_order_row': args.act_order_row, 
+        'per_tensor': args.per_tensor,
     }
     hyperparams = {"replace": args.replace}
 

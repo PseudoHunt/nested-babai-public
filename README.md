@@ -9,7 +9,9 @@ matched entropy-coded rate with a static SqueezeLLM-style diagonal-Fisher mask.
 
 **Result (Llama-3.2-1B, TurboBoA g=128, matched Huffman rate ≈ 3.07–3.09 bpw, wiki2 PPL, seeds 0/1):**
 Fisher mask 11.859 · in-loop top-k 11.772 · in-loop global λ **11.739** (pure 3-bit 12.011, all-4-bit-grid 10.533).
-The full results document, including the 2→3-bit experiment and the zero-alignment analysis, is `results/SUMMARY.md`.
+Also in `results/SUMMARY.md`: the 2→3-bit experiment (in-loop 36.1 vs Fisher 71.1 wiki2 at matched rate), a zero-aligned
+entropy-coding analysis (`scripts/rate_aligned.py`), and a per-tensor-scale experiment (`--per_tensor --group_size -1`:
+1 % refinement takes per-tensor W3 from 65.0 to 42.0 wiki2 for +0.03 bpw).
 
 ## Layout
 - `turboboa/` — vendored [TurboBoA](https://github.com/SamsungLabs/TurboBoA) (CC BY-NC 4.0, see `turboboa/LICENSE`) with a

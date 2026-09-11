@@ -38,7 +38,7 @@ def huffman_lengths(counts):
     return lengths
 
 
-def rate_tensor(codes, scale, zero, bits, group_size, zero_bits=None):
+def rate_tensor(codes, scale, zero, bits, group_size, zero_bits=None, n_qparams=None):
     n = codes.size
     nsym = 2 ** bits
     counts = np.bincount(codes.reshape(-1), minlength=nsym)[:nsym].astype(np.int64)
@@ -48,7 +48,7 @@ def rate_tensor(codes, scale, zero, bits, group_size, zero_bits=None):
     L = huffman_lengths(counts)
     huff_bits = float(sum(counts[i] * L[i] for i in L))
     table_bits = nsym * 4                      # one 4-bit code length per symbol
-    n_groups = scale.size
+    n_groups = scale.size if n_qparams is None else int(n_qparams)   # per-tensor dumps: 1 (scale, zero) set
     if zero_bits is None:   # old dumps without an explicit zero width: 3-bit coarse zero for W3 / nested 3->4, else native
         zero_bits = 3 if (bits == 3 or _is_nested_like(zero)) else bits
     side_bits = n_groups * (16 + zero_bits)
@@ -56,7 +56,7 @@ def rate_tensor(codes, scale, zero, bits, group_size, zero_bits=None):
         n=int(n), n_groups=int(n_groups), zero_bits=int(zero_bits),
         entropy_per_code=ent_bits / n,
         huffman_per_code=huff_bits / n,
-        nominal_bpw=bits + (16 + zero_bits) / group_size,
+        nominal_bpw=bits + side_bits / n,
         ideal_bpw=(ent_bits + table_bits + side_bits) / n,
         huffman_bpw=(huff_bits + table_bits + side_bits) / n,
         hist=counts.tolist(),
@@ -82,7 +82,8 @@ def main():
     for f in files:
         d = np.load(f)
         codes, scale, zero, bits = d["codes"], d["scale"], d["zero"], int(d["bits"])
-        r = rate_tensor(codes, scale, zero, bits, args.group_size, int(d["zero_bits"]) if "zero_bits" in d else None)
+        r = rate_tensor(codes, scale, zero, bits, args.group_size, int(d["zero_bits"]) if "zero_bits" in d else None,
+                        int(d["n_qparams"]) if "n_qparams" in d else None)
         if args.zero_bits is not None and r["zero_bits"] != args.zero_bits:
             delta = (args.zero_bits - r["zero_bits"]) * r["n_groups"] / r["n"]
             r["ideal_bpw"] += delta; r["huffman_bpw"] += delta
