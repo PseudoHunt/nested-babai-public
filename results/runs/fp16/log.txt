@@ -1,0 +1,33 @@
+Using the latest cached version of the dataset since wikitext couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'wikitext-2-raw-v1' at /home/jl_fs/hf/datasets/wikitext/wikitext-2-raw-v1/0.0.0/b08601e04326c79dfdd32d625aee71d232d685c3 (last modified on Fri Sep  4 02:34:11 2026).
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+Using the latest cached version of the dataset since allenai/c4 couldn't be found on the Hugging Face Hub (offline mode is enabled).
+ppl performance
+wikitext2 : 9.751
+Traceback (most recent call last):
+  File "/home/jl_fs/nested-babai/turboboa/main.py", line 22, in <module>
+    results = evaluate(llm, args)
+  File "/home/jl_fs/venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/jl_fs/nested-babai/turboboa/utils/eval_utils.py", line 30, in evaluate
+    testloader = get_testdata(dataset, args)
+  File "/home/jl_fs/nested-babai/turboboa/utils/data_utils.py", line 36, in get_testdata
+    testdata = get_loaders(tokenizer, testset, nsamples=None, seqlen=args.seqlen, seed=None, mode="test")
+  File "/home/jl_fs/nested-babai/turboboa/utils/data_utils.py", line 52, in get_loaders
+    return get_c4_new(tokenizer, nsamples, seqlen, mode)
+  File "/home/jl_fs/nested-babai/turboboa/utils/data_utils.py", line 172, in get_c4_new
+    testdata = load_dataset('allenai/c4', data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'}, split='validation')
+  File "/home/jl_fs/venv/lib/python3.10/site-packages/datasets/load.py", line 2062, in load_dataset
+    builder_instance = load_dataset_builder(
+  File "/home/jl_fs/venv/lib/python3.10/site-packages/datasets/load.py", line 1819, in load_dataset_builder
+    builder_instance: DatasetBuilder = builder_cls(
+  File "/home/jl_fs/venv/lib/python3.10/site-packages/datasets/packaged_modules/cache/cache.py", line 124, in __init__
+    config_name, version, hash = _find_hash_in_cache(
+  File "/home/jl_fs/venv/lib/python3.10/site-packages/datasets/packaged_modules/cache/cache.py", line 64, in _find_hash_in_cache
+    raise ValueError(
+ValueError: Couldn't find cache for allenai/c4 for config 'default-b885fc77211cd7f4'
+Available configs in the cache: ['default-c7bc8b0aefc5e48f']
+
+real	0m43.404s
+user	0m23.862s
+sys	0m19.749s

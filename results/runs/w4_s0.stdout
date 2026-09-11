@@ -1,0 +1,155 @@
+[run.sh] w4_s0 seed=0 w=4 extra: 
+load calibration from cache/calib_llama_wikitext2_128_2048_0.cache
+Start quantization
+>>>> Quantizing 1-th Transformer Block.... (1/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 2-th Transformer Block.... (2/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 3-th Transformer Block.... (3/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 4-th Transformer Block.... (4/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 5-th Transformer Block.... (5/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 6-th Transformer Block.... (6/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 7-th Transformer Block.... (7/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 8-th Transformer Block.... (8/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 9-th Transformer Block.... (9/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 10-th Transformer Block.... (10/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 11-th Transformer Block.... (11/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 12-th Transformer Block.... (12/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 13-th Transformer Block.... (13/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 14-th Transformer Block.... (14/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 15-th Transformer Block.... (15/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+>>>> Quantizing 16-th Transformer Block.... (16/16)
+>>> Layer: self_attn.q_proj
+>>> Layer: self_attn.k_proj
+>>> Layer: self_attn.v_proj
+>>> Layer: self_attn.o_proj
+>>> Layer: mlp.gate_proj
+>>> Layer: mlp.up_proj
+>>> Layer: mlp.down_proj
+Quantization processing time: 891.633
+Namespace(cache_dir='cache', print_memory_usage=False, llm_path='/home/jl_fs/models/llama-3.2-1b', tokenizer_path='/home/jl_fs/models/llama-3.2-1b', eval_fp=False, calib_data='wikitext2', nsamples=128, seqlen=2048, seed=0, w_bits=4, group_size=128, w_sym=False, qparam_comput='Hessian', block_v=True, n_quant_rows=16, consider_dX=True, alpha=0.25, adaptive_qparam=True, refine_qparam=True, n_iters=1, act_order_col=False, act_order_row=False, replace=0.00048828125, nested_arm='none', nested_p=0.01, nested_lambda=None, fisher_path=None, dump_dir='/home/jl_fs/nested-babai/results/runs/w4_s0', log_percol=False, lm_eval=False, tasks=['piqa', 'hellaswag', 'arc_easy', 'arc_challenge', 'winogrande', 'lambada_openai', 'lambada_standard', 'openbookqa', 'boolq'], lm_eval_batch_size='auto', llm_name='llama-3.2-1b', llm_type='llama', tokenizer_cls=<class 'transformers.models.auto.tokenization_auto.AutoTokenizer'>)
+ppl performance
+load calibration from cache/testloader_llama_wikitext2_2048.cache
+wikitext2 : 10.224
+load calibration from cache/testloader_llama_c4-new_2048.cache
+c4-new : 15.428
+zero-shot performance
+{'wikitext2': 10.224, 'c4-new': 15.428, 'time': 891.633}
+{
+ "n_weights": 973078528,
+ "n_tensors": 112,
+ "nominal_bpw": 4.15625,
+ "ideal_bpw": 3.874673044060475,
+ "huffman_bpw": 3.9018008133460738,
+ "refined_frac": null,
+ "free_frac": null
+}
+| run | Arm | p / λ | seed | refined % | nominal bpw | ideal bpw | Huffman bpw | wiki2 PPL | c4-new PPL | time (s) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| w3_s0 | native W3 | — | 0 |  | 3.148 | 2.966 | 2.996 | 12.011 | 20.115 | 1059 |
+| w3_s0_a30 | native W3 | — | 0 |  | 3.148 | 2.966 | 2.996 | 12.034 | 20.146 | 1307 |
+| w4_s0 | native W4 | — | 0 |  | 4.156 | 3.875 | 3.902 | 10.224 | 15.428 | 892 |
+

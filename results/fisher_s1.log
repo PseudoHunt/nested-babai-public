@@ -1,0 +1,10 @@
+112 target tensors, 973.1M params
+  sample 0/128  loss 2.195  1s  mem 12.7GB
+  sample 16/128  loss 2.860  3s  mem 12.7GB
+  sample 32/128  loss 2.456  5s  mem 12.7GB
+  sample 48/128  loss 2.178  7s  mem 12.7GB
+  sample 64/128  loss 2.676  10s  mem 12.7GB
+  sample 80/128  loss 2.097  12s  mem 12.7GB
+  sample 96/128  loss 2.082  14s  mem 12.7GB
+  sample 112/128  loss 2.327  17s  mem 12.7GB
+saved results/fisher/fisher_s1.pt  total Fisher mass 1.089e+04  time 25s

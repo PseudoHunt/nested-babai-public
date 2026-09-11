@@ -1,0 +1,282 @@
+[run.sh] b2_B_p045_s0 seed=0 w=2 extra: --nested_arm B --nested_p 0.0045
+load calibration from cache/calib_llama_wikitext2_128_2048_0.cache
+Start quantization
+>>>> Quantizing 1-th Transformer Block.... (1/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.1%  N=0.02163  12.7s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.0%  N=0.02163  11.5s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 54.4%  N=7.262e-07  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 52.9%  N=3.108e-07  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 53.1%  N=4.384e-05  3.5s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.1%  N=2.501e-05  3.5s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.2%  N=3.739e-07  12.7s
+>>>> Quantizing 2-th Transformer Block.... (2/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.2%  N=0.257  12.7s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.0%  N=0.2576  11.9s
+>>> Layer: self_attn.v_proj
+    refined 0.449%  free 53.2%  N=1.526e-06  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=7.461e-07  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 53.2%  N=8.869e-05  3.5s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.2%  N=2.923e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.2%  N=9.599e-06  13.1s
+>>>> Quantizing 3-th Transformer Block.... (3/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.2%  N=0.2149  12.8s
+>>> Layer: self_attn.k_proj
+    refined 0.449%  free 53.3%  N=0.2154  12.1s
+>>> Layer: self_attn.v_proj
+    refined 0.449%  free 53.3%  N=3.523e-06  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.1%  N=1.285e-06  3.5s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 53.0%  N=0.0001433  3.7s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.1%  N=3.82e-05  3.5s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.2%  N=5.76e-07  12.9s
+>>>> Quantizing 4-th Transformer Block.... (4/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 52.8%  N=0.229  12.6s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 52.9%  N=0.2305  11.9s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.2%  N=4.703e-06  3.4s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.1%  N=1.78e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 53.0%  N=0.0002347  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.2%  N=4.554e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.1%  N=7.292e-07  13.4s
+>>>> Quantizing 5-th Transformer Block.... (5/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.0%  N=0.2167  12.8s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.1%  N=0.2177  12.0s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.0%  N=7.756e-06  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 52.9%  N=2.649e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 53.0%  N=0.0002977  3.5s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.1%  N=4.611e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.0%  N=8.425e-07  13.3s
+>>>> Quantizing 6-th Transformer Block.... (6/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.1%  N=0.207  12.8s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.2%  N=0.2079  11.9s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.3%  N=1.147e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=3.009e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.00028  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.1%  N=5.287e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.0%  N=9.723e-07  13.3s
+>>>> Quantizing 7-th Transformer Block.... (7/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.0%  N=0.189  12.6s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.0%  N=0.1899  11.9s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.2%  N=1.713e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=3.417e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.0002715  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.0%  N=5.232e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 52.9%  N=9.458e-07  13.0s
+>>>> Quantizing 8-th Transformer Block.... (8/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.0%  N=0.09679  12.3s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.1%  N=0.09769  12.1s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.1%  N=1.667e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 52.9%  N=4.589e-06  3.3s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.000267  3.5s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.0%  N=5.594e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 52.8%  N=1.056e-06  13.2s
+>>>> Quantizing 9-th Transformer Block.... (9/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.2%  N=0.1279  12.8s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.3%  N=0.1292  11.8s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.1%  N=1.907e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.1%  N=3.613e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.0003497  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.0%  N=5.937e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 52.8%  N=1.231e-06  13.2s
+>>>> Quantizing 10-th Transformer Block.... (10/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.0%  N=0.1681  12.7s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 52.8%  N=0.1699  11.8s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 52.9%  N=1.673e-05  3.4s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 52.9%  N=6.014e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.8%  N=0.0003623  3.5s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.0%  N=6.546e-05  3.5s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.0%  N=1.336e-06  13.0s
+>>>> Quantizing 11-th Transformer Block.... (11/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.1%  N=0.1666  13.1s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.1%  N=0.1676  12.3s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.7%  N=1.557e-05  3.6s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=3.458e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.0003964  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.0%  N=7.653e-05  3.8s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.0%  N=1.775e-06  12.9s
+>>>> Quantizing 12-th Transformer Block.... (12/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.1%  N=0.1958  12.6s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.0%  N=0.1974  11.8s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.1%  N=1.112e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=3.899e-06  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 53.0%  N=0.0003146  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.1%  N=7.964e-05  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.2%  N=1.744e-06  13.1s
+>>>> Quantizing 13-th Transformer Block.... (13/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.1%  N=0.2101  12.8s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.5%  N=0.2112  12.3s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.2%  N=1.472e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=5.824e-06  3.3s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 53.0%  N=0.0002235  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.0%  N=8.461e-05  3.5s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.2%  N=1.875e-06  13.3s
+>>>> Quantizing 14-th Transformer Block.... (14/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 53.0%  N=0.2059  13.0s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 53.4%  N=0.2066  12.3s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.4%  N=2.019e-05  3.6s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=1.062e-05  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.0002211  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 53.0%  N=0.0001108  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.2%  N=3.503e-06  13.2s
+>>>> Quantizing 15-th Transformer Block.... (15/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 52.9%  N=0.1336  13.0s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 54.3%  N=0.1346  12.0s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.3%  N=2.968e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 52.9%  N=2.312e-05  3.3s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.0003027  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 52.9%  N=0.0001697  3.5s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.3%  N=8.934e-06  13.4s
+>>>> Quantizing 16-th Transformer Block.... (16/16)
+>>> Layer: self_attn.q_proj
+    refined 0.450%  free 52.9%  N=0.1791  12.8s
+>>> Layer: self_attn.k_proj
+    refined 0.450%  free 54.4%  N=0.1802  12.0s
+>>> Layer: self_attn.v_proj
+    refined 0.450%  free 53.5%  N=7.688e-05  3.5s
+>>> Layer: self_attn.o_proj
+    refined 0.450%  free 53.0%  N=4.837e-05  3.4s
+>>> Layer: mlp.gate_proj
+    refined 0.450%  free 52.9%  N=0.0003887  3.6s
+>>> Layer: mlp.up_proj
+    refined 0.450%  free 52.9%  N=0.0004276  3.6s
+>>> Layer: mlp.down_proj
+    refined 0.450%  free 53.3%  N=7.268e-05  13.7s
+Quantization processing time: 1332.173
+Namespace(cache_dir='cache', print_memory_usage=False, llm_path='/home/jl_fs/models/llama-3.2-1b', tokenizer_path='/home/jl_fs/models/llama-3.2-1b', eval_fp=False, calib_data='wikitext2', nsamples=128, seqlen=2048, seed=0, w_bits=2, group_size=128, w_sym=False, qparam_comput='Hessian', block_v=True, n_quant_rows=16, consider_dX=True, alpha=0.25, adaptive_qparam=True, refine_qparam=True, n_iters=1, act_order_col=False, act_order_row=False, replace=0.00048828125, nested_arm='B', nested_p=0.0045, nested_lambda=None, fisher_path=None, dump_dir='/home/jl_fs/nested-babai/results/runs/b2_B_p045_s0', log_percol=False, lm_eval=False, tasks=['piqa', 'hellaswag', 'arc_easy', 'arc_challenge', 'winogrande', 'lambada_openai', 'lambada_standard', 'openbookqa', 'boolq'], lm_eval_batch_size='auto', llm_name='llama-3.2-1b', llm_type='llama', tokenizer_cls=<class 'transformers.models.auto.tokenization_auto.AutoTokenizer'>)
+ppl performance
+load calibration from cache/testloader_llama_wikitext2_2048.cache
+wikitext2 : 43.301
+load calibration from cache/testloader_llama_c4-new_2048.cache
+c4-new : 125.894
+zero-shot performance
+{'wikitext2': 43.301, 'c4-new': 125.894, 'time': 1332.173}
+{
+ "n_weights": 973078528,
+ "n_tensors": 112,
+ "nominal_bpw": 3.140625,
+ "ideal_bpw": 2.133076122057544,
+ "huffman_bpw": 2.3374775761160356,
+ "refined_frac": 0.004499843408321512,
+ "free_frac": 0.5303910199938149
+}
+| run | Arm | p / λ | seed | refined % | nominal bpw | ideal bpw | Huffman bpw | wiki2 PPL | c4-new PPL | time (s) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A_p1_s0 | A [3→4] | p=0.01 | 0 | 1.00 | 4.148 | 3.008 | 3.071 | 11.855 | 19.703 | 1234 |
+| A_p1_s1 | A [3→4] | p=0.01 | 1 | 1.00 | 4.148 | 3.008 | 3.071 | 11.863 | 19.621 | 1227 |
+| B_p1_s0 | B [3→4] | p=0.01 | 0 | 1.00 | 4.148 | 3.027 | 3.076 | 11.782 | 19.513 | 1456 |
+| B_p1_s1 | B [3→4] | p=0.01 | 1 | 1.00 | 4.148 | 3.027 | 3.075 | 11.761 | 19.434 | 1275 |
+| C_l0.0759_s0 | C [3→4] | λ=0.07593 | 0 | 1.00 | 4.148 | 3.031 | 3.086 | 11.743 | 19.410 | 1383 |
+| C_l0.0759_s1 | C [3→4] | λ=0.07593 | 1 | 0.98 | 4.148 | 3.030 | 3.085 | 11.735 | 19.242 | 1228 |
+| b2_A_p1_s0 | A [2→3] | p=0.01 | 0 | 1.00 | 3.141 | 2.140 | 2.343 | 71.052 | 138.817 | 1301 |
+| b2_B_p045_s0 | B [2→3] | p=0.0045 | 0 | 0.45 | 3.141 | 2.133 | 2.337 | 43.301 | 125.894 | 1332 |
+| b2_B_p1_s0 | B [2→3] | p=0.01 | 0 | 1.00 | 3.141 | 2.164 | 2.346 | 37.305 | 93.568 | 1546 |
+| b2_C_l0.2585_s0 | C [2→3] | λ=0.2585 | 0 | 0.99 | 3.141 | 2.165 | 2.349 | 36.053 | 91.455 | 1295 |
+| b2_e2_s0 | E2 (coarse only) [2→3] | λ=∞ | 0 |  | 3.141 | 2.099 | 2.141 | 109.221 | 233.458 | 1278 |
+| b2_e3_s0 | E3 (all fine) [2→3] | λ=0 | 0 | 100.00 | 3.141 | 3.064 | 3.100 | 18.360 | 31.304 | 1275 |
+| b2_w2_s0 | native W2 | — | 0 |  | 2.141 | 2.099 | 2.141 | 109.221 | 233.458 | 1139 |
+| e3_s0 | E3 (coarse only) [3→4] | λ=∞ | 0 |  | 4.148 | 2.966 | 2.996 | 12.011 | 20.115 | 1205 |
+| e4_s0 | E4 (all fine) [3→4] | λ=0 | 0 | 100.00 | 4.148 | 3.946 | 3.982 | 10.533 | 16.346 | 1092 |
+| w3_s0 | native W3 | — | 0 |  | 3.148 | 2.966 | 2.996 | 12.011 | 20.115 | 1059 |
+| w3_s0_a30 | native W3 | — | 0 |  | 3.148 | 2.966 | 2.996 | 12.034 | 20.146 | 1307 |
+| w4_s0 | native W4 | — | 0 |  | 4.156 | 3.875 | 3.902 | 10.224 | 15.428 | 892 |
+

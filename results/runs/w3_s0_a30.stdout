@@ -1,0 +1,257 @@
+[run.sh] w3_s0 seed=0 w=3 extra: 
+load calibration from cache/calib_llama_wikitext2_128_2048_0.cache
+Start quantization
+>>>> Quantizing 1-th Transformer Block.... (1/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 2-th Transformer Block.... (2/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 3-th Transformer Block.... (3/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 4-th Transformer Block.... (4/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 5-th Transformer Block.... (5/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 6-th Transformer Block.... (6/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 7-th Transformer Block.... (7/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 8-th Transformer Block.... (8/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 9-th Transformer Block.... (9/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 10-th Transformer Block.... (10/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 11-th Transformer Block.... (11/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 12-th Transformer Block.... (12/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 13-th Transformer Block.... (13/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 14-th Transformer Block.... (14/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 15-th Transformer Block.... (15/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+>>>> Quantizing 16-th Transformer Block.... (16/16)
+>>> Layer: self_attn.q_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.k_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.v_proj
+NOT supported for group-wise quantization yet
+>>> Layer: self_attn.o_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.gate_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.up_proj
+NOT supported for group-wise quantization yet
+>>> Layer: mlp.down_proj
+NOT supported for group-wise quantization yet
+Quantization processing time: 1306.927
+Namespace(cache_dir='cache', print_memory_usage=False, llm_path='/home/jl_fs/models/llama-3.2-1b', tokenizer_path='/home/jl_fs/models/llama-3.2-1b', eval_fp=False, calib_data='wikitext2', nsamples=128, seqlen=2048, seed=0, w_bits=3, group_size=128, w_sym=False, qparam_comput='Hessian', block_v=True, n_quant_rows=16, consider_dX=True, alpha=0.25, adaptive_qparam=True, refine_qparam=True, n_iters=1, act_order_col=False, act_order_row=False, replace=0.00048828125, nested_arm='none', nested_p=0.01, nested_lambda=None, fisher_path=None, dump_dir='/home/jl_fs/nested-babai/results/runs/w3_s0', log_percol=False, lm_eval=False, tasks=['piqa', 'hellaswag', 'arc_easy', 'arc_challenge', 'winogrande', 'lambada_openai', 'lambada_standard', 'openbookqa', 'boolq'], lm_eval_batch_size='auto', llm_name='llama-3.2-1b', llm_type='llama', tokenizer_cls=<class 'transformers.models.auto.tokenization_auto.AutoTokenizer'>)
+ppl performance
+load calibration from cache/testloader_llama_wikitext2_2048.cache
+wikitext2 : 12.034
+load calibration from cache/testloader_llama_c4-new_2048.cache
+c4-new : 20.146
+zero-shot performance
+{'wikitext2': 12.034, 'c4-new': 20.146, 'time': 1306.927}
+scripts/run.sh: line 18: syntax error near unexpected token `)'
+
+real	23m19.283s
+user	16m16.612s
+sys	6m41.152s

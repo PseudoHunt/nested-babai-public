@@ -1,0 +1,1917 @@
+{
+ "model": {
+  "n_weights": 973078528,
+  "n_tensors": 112,
+  "nominal_bpw": 2.140625,
+  "ideal_bpw": 2.0987145666667106,
+  "huffman_bpw": 2.140587948519608,
+  "refined_frac": null,
+  "free_frac": null
+ },
+ "per_layer": {
+  "layers.00.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.96778285042973,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1084088041040463,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3312984,
+    5075764,
+    5079016,
+    3309452
+   ],
+   "odd_frac": null
+  },
+  "layers.00.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9528043829830537,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.09343033665737,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3140148,
+    5267218,
+    5255191,
+    3114659
+   ],
+   "odd_frac": null
+  },
+  "layers.00.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.953660139372814,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0942860930471303,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3135439,
+    5249875,
+    5253423,
+    3138479
+   ],
+   "odd_frac": null
+  },
+  "layers.00.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9247749495198767,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.065415208308939,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    177285,
+    345740,
+    346360,
+    179191
+   ],
+   "odd_frac": null
+  },
+  "layers.00.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9611704977286382,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1017993124259036,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    806599,
+    1292929,
+    1288582,
+    806194
+   ],
+   "odd_frac": null
+  },
+  "layers.00.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9337457494224393,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.074374564119705,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    728266,
+    1359963,
+    1367773,
+    738302
+   ],
+   "odd_frac": null
+  },
+  "layers.00.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9648529870018914,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.105493245790954,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    202254,
+    318286,
+    321186,
+    206850
+   ],
+   "odd_frac": null
+  },
+  "layers.01.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9613016189574388,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1019275726317552,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3217143,
+    5159069,
+    5163693,
+    3237311
+   ],
+   "odd_frac": null
+  },
+  "layers.01.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9545284298102987,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.095154383484615,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3151326,
+    5248026,
+    5235556,
+    3142308
+   ],
+   "odd_frac": null
+  },
+  "layers.01.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9559289043847508,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.096554858059067,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3159836,
+    5221363,
+    5230059,
+    3165958
+   ],
+   "odd_frac": null
+  },
+  "layers.01.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9510982274742121,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0917384862632744,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    194817,
+    330573,
+    329442,
+    193744
+   ],
+   "odd_frac": null
+  },
+  "layers.01.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9569356374754596,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0975644521727252,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    793504,
+    1301920,
+    1305071,
+    793809
+   ],
+   "odd_frac": null
+  },
+  "layers.01.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.959672992593867,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1003018072911326,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    794153,
+    1290359,
+    1300130,
+    809662
+   ],
+   "odd_frac": null
+  },
+  "layers.01.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9685871309733707,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.109227389762433,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    208183,
+    318074,
+    315205,
+    207114
+   ],
+   "odd_frac": null
+  },
+  "layers.02.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9621391166402193,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1027650703145357,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3238559,
+    5153858,
+    5148113,
+    3236686
+   ],
+   "odd_frac": null
+  },
+  "layers.02.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9539759513784776,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.094601905052794,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3107598,
+    5230099,
+    5265258,
+    3174261
+   ],
+   "odd_frac": null
+  },
+  "layers.02.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9549019298749757,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.095527883549292,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3143193,
+    5238246,
+    5236794,
+    3158983
+   ],
+   "odd_frac": null
+  },
+  "layers.02.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9524339614224835,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.093074220211546,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    197097,
+    330050,
+    328084,
+    193345
+   ],
+   "odd_frac": null
+  },
+  "layers.02.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9555582220322911,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0961870367295568,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    792103,
+    1308039,
+    1306946,
+    787216
+   ],
+   "odd_frac": null
+  },
+  "layers.02.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9632796951345926,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.103908509831858,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    819389,
+    1289570,
+    1278568,
+    806777
+   ],
+   "odd_frac": null
+  },
+  "layers.02.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.975343660764544,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1159839195536065,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    214789,
+    310470,
+    310460,
+    212857
+   ],
+   "odd_frac": null
+  },
+  "layers.03.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9550196302879073,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0956455839622237,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3147202,
+    5231446,
+    5240912,
+    3157656
+   ],
+   "odd_frac": null
+  },
+  "layers.03.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.951654038338715,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0922799920130313,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3089762,
+    5255245,
+    5292327,
+    3139882
+   ],
+   "odd_frac": null
+  },
+  "layers.03.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9536639158670164,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.094289869541333,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3144596,
+    5257012,
+    5246157,
+    3129451
+   ],
+   "odd_frac": null
+  },
+  "layers.03.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9482877575021442,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0889280162912067,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    191124,
+    331816,
+    331988,
+    193648
+   ],
+   "odd_frac": null
+  },
+  "layers.03.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.959536799083635,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1001656137809004,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    803123,
+    1298101,
+    1293391,
+    799689
+   ],
+   "odd_frac": null
+  },
+  "layers.03.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9496341690901577,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.090262983787423,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    770387,
+    1322982,
+    1325049,
+    775886
+   ],
+   "odd_frac": null
+  },
+  "layers.03.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9576598935801988,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0983001523692613,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    199016,
+    324925,
+    325757,
+    198878
+   ],
+   "odd_frac": null
+  },
+  "layers.04.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9504526013587984,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.091078555033115,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3094086,
+    5279675,
+    5294709,
+    3108746
+   ],
+   "odd_frac": null
+  },
+  "layers.04.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9521779358019162,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0928038894762326,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3087722,
+    5252585,
+    5283142,
+    3153767
+   ],
+   "odd_frac": null
+  },
+  "layers.04.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9539608077706885,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.094586761445005,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3144471,
+    5251993,
+    5244495,
+    3136257
+   ],
+   "odd_frac": null
+  },
+  "layers.04.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9503681341606003,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0910083929496626,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    193956,
+    330932,
+    330084,
+    193604
+   ],
+   "odd_frac": null
+  },
+  "layers.04.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9563035301865155,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.096932344883781,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    788221,
+    1304511,
+    1306140,
+    795432
+   ],
+   "odd_frac": null
+  },
+  "layers.04.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9544736521322514,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.095102466829517,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    785856,
+    1310877,
+    1310336,
+    787235
+   ],
+   "odd_frac": null
+  },
+  "layers.04.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9580344455215193,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.098674704310582,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    198945,
+    325562,
+    324564,
+    199505
+   ],
+   "odd_frac": null
+  },
+  "layers.05.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9555488854287741,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0961748391030905,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3159197,
+    5228673,
+    5231543,
+    3157803
+   ],
+   "odd_frac": null
+  },
+  "layers.05.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.952965116309227,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0935910699835434,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3088958,
+    5239157,
+    5278603,
+    3170498
+   ],
+   "odd_frac": null
+  },
+  "layers.05.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.95505037577815,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0956763294524663,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3147975,
+    5233937,
+    5237726,
+    3157578
+   ],
+   "odd_frac": null
+  },
+  "layers.05.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.967963861413446,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1086041202025085,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    207568,
+    316411,
+    317948,
+    206649
+   ],
+   "odd_frac": null
+  },
+  "layers.05.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9605698914698677,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1011987061671333,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    803938,
+    1293450,
+    1291764,
+    805152
+   ],
+   "odd_frac": null
+  },
+  "layers.05.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9679092260944735,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.108538040791739,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    828961,
+    1271000,
+    1266826,
+    827517
+   ],
+   "odd_frac": null
+  },
+  "layers.05.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9721457229587218,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.112785981747784,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    211129,
+    313471,
+    313508,
+    210468
+   ],
+   "odd_frac": null
+  },
+  "layers.06.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9435880185869028,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.084213972261219,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3030821,
+    5362336,
+    5356714,
+    3027345
+   ],
+   "odd_frac": null
+  },
+  "layers.06.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9534756986901598,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0941016523644764,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3087277,
+    5222062,
+    5283594,
+    3184283
+   ],
+   "odd_frac": null
+  },
+  "layers.06.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.955162061604823,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0957880152791395,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3160147,
+    5235635,
+    5233458,
+    3147976
+   ],
+   "odd_frac": null
+  },
+  "layers.06.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9561873404281085,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.096827599217171,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    200055,
+    327732,
+    325050,
+    195739
+   ],
+   "odd_frac": null
+  },
+  "layers.06.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9679009881598746,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.10852980285714,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    829418,
+    1268036,
+    1269850,
+    827000
+   ],
+   "odd_frac": null
+  },
+  "layers.06.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9582618331933879,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0988906478906535,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    799565,
+    1303408,
+    1295720,
+    795611
+   ],
+   "odd_frac": null
+  },
+  "layers.06.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9587965271603631,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0994367859494254,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    202079,
+    325792,
+    323136,
+    197569
+   ],
+   "odd_frac": null
+  },
+  "layers.07.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9393696253397565,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.079995579014073,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    2980069,
+    5397765,
+    5405614,
+    2993768
+   ],
+   "odd_frac": null
+  },
+  "layers.07.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9525863233377028,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.093212277012019,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3079056,
+    5234910,
+    5290859,
+    3172391
+   ],
+   "odd_frac": null
+  },
+  "layers.07.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9556149933703655,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0962409470446817,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3157407,
+    5229249,
+    5229441,
+    3161119
+   ],
+   "odd_frac": null
+  },
+  "layers.07.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9552483837498693,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.095888642538932,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    196679,
+    325354,
+    328821,
+    197722
+   ],
+   "odd_frac": null
+  },
+  "layers.07.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9609211577232537,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1015499724205196,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    803820,
+    1293217,
+    1289827,
+    807440
+   ],
+   "odd_frac": null
+  },
+  "layers.07.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9603251297608681,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1009539444581335,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    807105,
+    1296497,
+    1290173,
+    800529
+   ],
+   "odd_frac": null
+  },
+  "layers.07.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9613061222236063,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.101946381012669,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    199616,
+    320141,
+    324943,
+    203876
+   ],
+   "odd_frac": null
+  },
+  "layers.08.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9444222169290928,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.085048170603409,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3034278,
+    5350451,
+    5351530,
+    3040957
+   ],
+   "odd_frac": null
+  },
+  "layers.08.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9523883438496479,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0930142975239643,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3053402,
+    5220967,
+    5307053,
+    3195794
+   ],
+   "odd_frac": null
+  },
+  "layers.08.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9573352600673992,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0979612137417156,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3174484,
+    5203569,
+    5214994,
+    3184169
+   ],
+   "odd_frac": null
+  },
+  "layers.08.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9572437162891694,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.097883975078232,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    196992,
+    323916,
+    327334,
+    200334
+   ],
+   "odd_frac": null
+  },
+  "layers.08.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9698129416726058,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1104417563698714,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    836804,
+    1263429,
+    1261217,
+    832854
+   ],
+   "odd_frac": null
+  },
+  "layers.08.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9617888105733559,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1024176252706215,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    811069,
+    1289525,
+    1288136,
+    805574
+   ],
+   "odd_frac": null
+  },
+  "layers.08.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.96044265110032,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1010829098893824,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    199317,
+    322181,
+    324279,
+    202799
+   ],
+   "odd_frac": null
+  },
+  "layers.09.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9576474279347815,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.098273381609098,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3183837,
+    5204670,
+    5206554,
+    3182155
+   ],
+   "odd_frac": null
+  },
+  "layers.09.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.954521216207025,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0951471698813413,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3080276,
+    5195477,
+    5284649,
+    3216814
+   ],
+   "odd_frac": null
+  },
+  "layers.09.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9580001790397843,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0986261327141005,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3194757,
+    5203001,
+    5199829,
+    3179629
+   ],
+   "odd_frac": null
+  },
+  "layers.09.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9490003146599804,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.089640573449043,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    191959,
+    330353,
+    332499,
+    193765
+   ],
+   "odd_frac": null
+  },
+  "layers.09.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9523690953420414,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.092997910039307,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    781029,
+    1317406,
+    1315650,
+    780219
+   ],
+   "odd_frac": null
+  },
+  "layers.09.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9588403391344071,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0994691538316728,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    799448,
+    1300095,
+    1295601,
+    799160
+   ],
+   "odd_frac": null
+  },
+  "layers.09.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9513713362155296,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.092011595004592,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    193973,
+    328793,
+    330843,
+    194967
+   ],
+   "odd_frac": null
+  },
+  "layers.10.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9561257375886938,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.09675169126301,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3160267,
+    5218105,
+    5228740,
+    3170104
+   ],
+   "odd_frac": null
+  },
+  "layers.10.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9557415224743835,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0963674761487,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3129631,
+    5205573,
+    5249391,
+    3192621
+   ],
+   "odd_frac": null
+  },
+  "layers.10.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9597629458075365,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.100388899481853,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3200492,
+    5175072,
+    5185430,
+    3216222
+   ],
+   "odd_frac": null
+  },
+  "layers.10.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9662083766436453,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1068486354327076,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    206511,
+    320087,
+    317208,
+    204770
+   ],
+   "odd_frac": null
+  },
+  "layers.10.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9625416677742595,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1031704824715254,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    816313,
+    1291721,
+    1281115,
+    805155
+   ],
+   "odd_frac": null
+  },
+  "layers.10.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.973674794500401,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1143036091976666,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    850216,
+    1250018,
+    1246529,
+    847541
+   ],
+   "odd_frac": null
+  },
+  "layers.10.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9492038405135945,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.089844099302657,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    192900,
+    329976,
+    332607,
+    193093
+   ],
+   "odd_frac": null
+  },
+  "layers.11.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9709870282367021,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1116129819110183,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3356466,
+    5033157,
+    5032127,
+    3355466
+   ],
+   "odd_frac": null
+  },
+  "layers.11.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9586949958712145,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0993209495455307,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3177196,
+    5180032,
+    5205983,
+    3214005
+   ],
+   "odd_frac": null
+  },
+  "layers.11.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9605360479954401,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1011620016697563,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3218313,
+    5170175,
+    5171519,
+    3217209
+   ],
+   "odd_frac": null
+  },
+  "layers.11.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9555286582756397,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.096168917064702,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    198269,
+    326800,
+    326985,
+    196522
+   ],
+   "odd_frac": null
+  },
+  "layers.11.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9572648973294016,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.097893712026667,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    788619,
+    1299543,
+    1305412,
+    800730
+   ],
+   "odd_frac": null
+  },
+  "layers.11.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9686801840760348,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1093089987733005,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    829050,
+    1265118,
+    1267419,
+    832717
+   ],
+   "odd_frac": null
+  },
+  "layers.11.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9494507641644891,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0900910229535516,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    193856,
+    332738,
+    329503,
+    192479
+   ],
+   "odd_frac": null
+  },
+  "layers.12.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9816290624023667,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.122255016076683,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3519105,
+    4856757,
+    4867636,
+    3533718
+   ],
+   "odd_frac": null
+  },
+  "layers.12.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.957716615460849,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0983425691351654,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3177414,
+    5205503,
+    5204059,
+    3190240
+   ],
+   "odd_frac": null
+  },
+  "layers.12.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9586744140533716,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.099300367727688,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3187430,
+    5188986,
+    5197760,
+    3203040
+   ],
+   "odd_frac": null
+  },
+  "layers.12.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9591296242703637,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0997698830594262,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    198760,
+    324052,
+    324422,
+    201342
+   ],
+   "odd_frac": null
+  },
+  "layers.12.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9554254056664,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0960542203636656,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    791371,
+    1310390,
+    1305355,
+    787188
+   ],
+   "odd_frac": null
+  },
+  "layers.12.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9705333311241549,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1111621458214205,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    840641,
+    1261850,
+    1257674,
+    834139
+   ],
+   "odd_frac": null
+  },
+  "layers.12.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9523444211976209,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0929846799866834,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    194517,
+    328142,
+    330147,
+    195770
+   ],
+   "odd_frac": null
+  },
+  "layers.13.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9803443186157343,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1209702722900508,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3501880,
+    4884632,
+    4885539,
+    3505165
+   ],
+   "odd_frac": null
+  },
+  "layers.13.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9562067204025793,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0968326740768957,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3146103,
+    5212026,
+    5232667,
+    3186420
+   ],
+   "odd_frac": null
+  },
+  "layers.13.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.957188793614261,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0978147472885773,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3191531,
+    5222610,
+    5199252,
+    3163823
+   ],
+   "odd_frac": null
+  },
+  "layers.13.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9637418654506102,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.104382124239673,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    204215,
+    320782,
+    320551,
+    203028
+   ],
+   "odd_frac": null
+  },
+  "layers.13.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.96268807785637,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.103316892553636,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    813032,
+    1287167,
+    1284865,
+    809240
+   ],
+   "odd_frac": null
+  },
+  "layers.13.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9710882438321862,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.111717058529452,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    840228,
+    1260158,
+    1255423,
+    838495
+   ],
+   "odd_frac": null
+  },
+  "layers.13.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9479132627944433,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.088553521583506,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    193490,
+    333747,
+    330539,
+    190800
+   ],
+   "odd_frac": null
+  },
+  "layers.14.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.992967588678365,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1335935423526813,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3785979,
+    4613097,
+    4603036,
+    3775104
+   ],
+   "odd_frac": null
+  },
+  "layers.14.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9551367117427367,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.095762665417053,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3132853,
+    5220725,
+    5248622,
+    3175016
+   ],
+   "odd_frac": null
+  },
+  "layers.14.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9559975135979661,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0966234672722823,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3164023,
+    5220835,
+    5229004,
+    3163354
+   ],
+   "odd_frac": null
+  },
+  "layers.14.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9492609137510246,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0899011725400873,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    191374,
+    329301,
+    333167,
+    194734
+   ],
+   "odd_frac": null
+  },
+  "layers.14.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9606068660538378,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1012356807511035,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    806646,
+    1292336,
+    1292643,
+    802679
+   ],
+   "odd_frac": null
+  },
+  "layers.14.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9563812580339182,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.097010072731184,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    793810,
+    1307039,
+    1303180,
+    790275
+   ],
+   "odd_frac": null
+  },
+  "layers.14.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9139154714094153,
+   "huffman_per_code": 1.993011474609375,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.054555730198478,
+   "huffman_bpw": 2.1336517333984375,
+   "hist": [
+    172542,
+    351254,
+    352325,
+    172455
+   ],
+   "odd_frac": null
+  },
+  "layers.15.mlp.down_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9986301013598842,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.139256055034201,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    4005647,
+    4373906,
+    4380080,
+    4017583
+   ],
+   "odd_frac": null
+  },
+  "layers.15.mlp.gate_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9524904756540564,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.093116429328373,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3120151,
+    5263945,
+    5265574,
+    3127546
+   ],
+   "odd_frac": null
+  },
+  "layers.15.mlp.up_proj": {
+   "n": 16777216,
+   "n_groups": 131072,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9533239196333603,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0939498733076767,
+   "huffman_bpw": 2.1406259536743164,
+   "hist": [
+    3133235,
+    5254613,
+    5256261,
+    3133107
+   ],
+   "odd_frac": null
+  },
+  "layers.15.self_attn.k_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.936195872913258,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0768361317023203,
+   "huffman_bpw": 2.1406402587890625,
+   "hist": [
+    188484,
+    342550,
+    336340,
+    181202
+   ],
+   "odd_frac": null
+  },
+  "layers.15.self_attn.o_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.966205669904942,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.1068344846022073,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    824582,
+    1277242,
+    1272025,
+    820455
+   ],
+   "odd_frac": null
+  },
+  "layers.15.self_attn.q_proj": {
+   "n": 4194304,
+   "n_groups": 32768,
+   "zero_bits": 2,
+   "entropy_per_code": 1.9465120357927774,
+   "huffman_per_code": 2.0,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.087140850490043,
+   "huffman_bpw": 2.1406288146972656,
+   "hist": [
+    765427,
+    1334188,
+    1330466,
+    764223
+   ],
+   "odd_frac": null
+  },
+  "layers.15.self_attn.v_proj": {
+   "n": 1048576,
+   "n_groups": 8192,
+   "zero_bits": 2,
+   "entropy_per_code": 1.8983973843148978,
+   "huffman_per_code": 1.970895767211914,
+   "nominal_bpw": 2.140625,
+   "ideal_bpw": 2.0390376431039603,
+   "huffman_bpw": 2.1115360260009766,
+   "hist": [
+    164228,
+    358306,
+    360394,
+    165648
+   ],
+   "odd_frac": null
+  }
+ }
+}

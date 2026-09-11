@@ -1,0 +1,6 @@
+venv/
+turboboa/cache/
+results/runs/*/layers.*.npz
+results/fisher/*.pt
+__pycache__/
+*.pyc
