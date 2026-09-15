@@ -1,0 +1,953 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Refine As You Round — MLSys 2027 submission (research track)
+% Format: mlsys2025style (MLSys 2027 uses the 2025 style; 2-column,
+% <= 10 pages excluding references; appendix uploaded separately).
+%
+% Build:  latexmk -pdf main.tex
+% Anonymous submission: \usepackage{mlsys2025}
+% Camera-ready:         \usepackage[accepted]{mlsys2025}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass{article}
+
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+% Anonymous submission (double-blind). Switch to [accepted] for camera-ready.
+\usepackage{mlsys2025}
+
+% ---- placeholder macros: red = numbers to fill, blue = systems co-author
+\newcommand{\tbd}[1]{\textcolor{red}{[#1]}}
+\newcommand{\teammate}[1]{\textcolor{blue}{[TEAMMATE: #1]}}
+\newcommand{\blank}{\textcolor{red}{[\;\;]}}
+
+\newcommand{\bpw}{\mathrm{bpw}}
+\newcommand{\gain}{\mathrm{gain}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\Hin}{H_{\mathrm{in}}}
+\newcommand{\Hout}{H_{\mathrm{out}}}
+
+\mlsystitlerunning{Refine As You Round: In-Loop Nested-Lattice Mixed Precision}
+
+\begin{document}
+
+\twocolumn[
+\mlsystitle{Refine As You Round: In-Loop Nested-Lattice Mixed Precision\\
+for Entropy-Coded 3-bit LLM Weights}
+
+\mlsyssetsymbol{equal}{*}
+
+\begin{mlsysauthorlist}
+\mlsysauthor{Anonymous Authors}{anon}
+\end{mlsysauthorlist}
+
+\mlsysaffiliation{anon}{Anonymous Institution, Anonymous City, Anonymous Region, Anonymous Country}
+
+\mlsyscorrespondingauthor{Anonymous Author}{anon.email@domain.com}
+
+\mlsyskeywords{Machine Learning, MLSys, quantization, mixed precision, entropy coding}
+
+\vskip 0.3in
+
+\begin{abstract}
+Weight-only post-training quantization (PTQ) of large language models at
+3 bits per weight still loses noticeably more perplexity than 4 bits,
+while 4 bits wastes rate on the majority of weights that are already well
+represented at 3. Mixed precision at element granularity closes this gap
+in principle, but existing schemes either store an explicit sparse index
+for the high-precision elements (SpQR) or need a full gradient pass over
+the model to pick them (SqueezeLLM). We present a representation and a
+selection rule that need neither. The representation is a nested lattice:
+the 3-bit grid of every quantization group is embedded in a 4-bit grid
+with half the step and the same zero, so the weight stream is a single
+4-bit code stream in which refined elements are the odd codes; the mask
+is implicit and the stream has low entropy, so a per-tensor Huffman code
+stores it at $\approx 3.07$ bits/weight including all side information.
+The selection is made inside the GPTQ-style column loop, at the moment
+each weight is rounded, from the solver's own second-order error weight
+applied to the error-compensated weight: $\gain_{ij} = (e_c^2 - e_f^2)\,
+d_j\, r_i$, where $d_j$ and $r_i$ are the column and row weights the
+solver already uses (two-sided where the solver is two-sided). One global
+threshold on the layer-normalised gain allocates the refinement budget
+across the whole model. On Llama-3.2-1B quantised with TurboBoA at
+$g{=}128$ and matched entropy-coded rate, the in-loop rule
+\tbd{matches/beats} the static diagonal-Fisher mask by \tbd{$\Delta$
+wiki2 PPL over 3 seeds}, with zero extra passes over the model; the rule
+transfers to \tbd{3B/8B and to Mistral/Qwen} \tbd{one clause}. The second
+half of the paper describes the bitstream format, the decoder, and the
+fused dequantisation kernels that make the entropy-coded stream usable at
+inference time \teammate{one-sentence systems result}.
+\end{abstract}
+]
+
+\printAffiliationsAndNotice{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+
+Serving a large language model (LLM) at batch size one is bound by the
+bytes of weights that must cross the memory bus per generated token, so
+the effective bits per weight (bpw) of the stored model translates almost
+linearly into decode latency and into how large a model fits on a given
+device. Post-training quantization (PTQ) of weights to 4 bits with
+per-group scales is now routine and nearly lossless for models above a
+few billion parameters \citep{frantar2023gptq,lin2024awq}; 3 bits is
+where the loss becomes visible, and 2 bits is where it becomes severe
+\citep{chee2023quip,egiazarian2024aqlm}. Between 3 and 4 bits sits a
+well-known asymmetry: only a small fraction of the weights are
+responsible for most of the 3-bit degradation, and giving those weights
+one more bit recovers a disproportionate share of the 4-bit quality
+\citep{dettmers2024spqr,kim2024squeezellm}.
+
+Exploiting that asymmetry at element granularity raises two questions
+that existing methods answer expensively. \emph{Where is the extra
+precision stored?} SpQR \citep{dettmers2024spqr} keeps the sensitive
+weights in a separate sparse FP16 structure with explicit row/column
+indices, which costs $\sim$32 bits per outlier and a second data path in
+the kernel. \emph{How are the sensitive weights chosen?} SqueezeLLM
+\citep{kim2024squeezellm} ranks weights by a diagonal empirical Fisher,
+which needs a full backward pass over the model on the calibration set
+before quantization starts; SpQR uses the quantizer's own error but
+stores it densely.
+
+This paper answers both questions with one construction. First, the
+\emph{nested lattice}: within each quantization group the 3-bit grid
+$\{s_c(q - z_c)\}$ is a sub-lattice of the 4-bit grid with step $s_c/2$
+and zero $2z_c$. Every weight is stored as a 4-bit code; a 3-bit weight
+is the even code $2q_c$ and a refined weight is any code $q_f$.
+Dequantization is one multiply--add for every element, there is no mask,
+no index and no second scale, and the code stream has low entropy (half
+the codes are even and the histogram is peaked), so a 16-symbol Huffman
+table per tensor brings the stored rate to $3+\epsilon$ bpw where
+$\epsilon$ is set by the refined fraction. Second, the \emph{in-loop
+selection rule}: the GPTQ/OBS family of solvers
+\citep{frantar2022obc,frantar2023gptq} quantizes one column at a time on
+the error-compensated weight $w$ and turns the rounding error into a loss
+increment $(w-q)^2 d_j$ with a column weight $d_j$ derived from the
+Cholesky factor of the inverse input Hessian. At the moment column $j$ is
+rounded we therefore know, for every row $i$, exactly how much loss the
+solver would save by rounding to the fine grid instead: $\gain_{ij} =
+(e_c^2 - e_f^2)\, d_j\, r_i$, with $r_i$ the row weight in solvers that
+carry an output-side Hessian. We refine iff the gain is large --- top-$k$
+per column, or above one global threshold $\lambda$ on the gain
+normalised by the layer's own loss scale --- and propagate the error of
+the value that is actually stored. No gradients, no extra calibration
+pass, no change to the solver outside the rounding call.
+
+The natural baseline is the same nested representation with the mask
+chosen by the static Fisher score. We run the comparison at matched
+entropy-coded rate on Llama-3.2-1B \citep{grattafiori2024llama3} with
+TurboBoA \citep{kim2025boa}, a two-sided GPTQ-family solver, across three
+calibration seeds, and \tbd{state the outcome}. A surprising diagnostic
+explains why the in-loop rule can win: \tbd{X}\% of the elements a
+Fisher mask selects are already exactly representable on the coarse grid
+(their fine code is even), so the static mask spends \tbd{half} of its
+budget on elements where refinement changes nothing, whereas the in-loop
+rule sees the compensated residual and never does. We then show that the
+same rule and the same protocol transfer across model sizes
+(Section~\ref{sec:scaling}), model families (Section~\ref{sec:families})
+and against published 3-bit methods on the standard Llama-2 test bed
+(Section~\ref{sec:published}).
+
+\paragraph{Contributions.}
+\begin{itemize}\itemsep 0pt
+\item A nested-lattice mixed-precision representation for grouped weight
+  quantization in which the per-element precision mask is implicit in a
+  single entropy-coded code stream (Section~\ref{sec:representation}).
+\item An in-loop refinement rule that reuses the solver's second-order
+  error weights, including the row weight of two-sided (attention-aware)
+  solvers, and a rate-only calibration of its single global threshold
+  (Section~\ref{sec:inloop}).
+\item An evaluation protocol that compares selection rules at matched
+  entropy-coded bits/weight rather than nominal bits, with endpoints that
+  verify the modified solver is a bit-exact superset of the stock one
+  (Section~\ref{sec:protocol}), and results on Llama-3.2-1B at
+  3$\to$4 and 2$\to$3 bits, on 3B/8B models, on other families, and
+  against published methods (Section~\ref{sec:results}).
+\item \teammate{The bitstream format, Huffman decoder and fused
+  dequantisation kernel, with end-to-end decode throughput and memory
+  numbers (Sections~\ref{sec:bitstream}--\ref{sec:sysval}).}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Background}
+\label{sec:background}
+
+\subsection{Weight-only PTQ with second-order error compensation}
+
+For a linear layer with weight $W \in \mathbb{R}^{d_{\mathrm{out}}\times
+d_{\mathrm{in}}}$ and calibration inputs $X$, GPTQ-family methods
+minimise the layer output error $\mathcal{L}(\hat W) = \tr\big((\hat W -
+W)\,\Hin\,(\hat W - W)^\top\big)$, $\Hin = XX^\top$, subject to $\hat W$
+lying on the quantization grid. Optimal Brain Surgeon
+\citep{hassibi1993obs} gives the exact update for quantizing one weight
+and compensating the rest; GPTQ \citep{frantar2023gptq} applies it column
+by column using the upper Cholesky factor $U$ of $\Hin^{-1}$: after
+quantizing column $j$ of the compensated weight to $q$, the error
+$\mathrm{err} = (w-q)/U_{jj}$ is propagated to the remaining columns as
+$\mathrm{err}\,U_{j,j:}$, and the loss increases by exactly
+$\mathrm{err}^2 = (w-q)^2/U_{jj}^2$. We write $d_j = 1/U_{jj}^2$ for
+this column weight.
+
+\subsection{What the solver minimises, layer by layer}
+\label{sec:objectives}
+
+The in-loop rule reuses the solver's loss weights, so we state exactly
+what TurboBoA \citep{kim2025boa} minimises for each linear layer of a
+Llama block; the per-element gain of Section~\ref{sec:inloop} is the
+increment of these objectives. Notation: $X \in \mathbb{R}^{L\times d}$
+holds the $L$ calibration tokens entering the layer as rows, $W \in
+\mathbb{R}^{d_{\mathrm{out}}\times d_{\mathrm{in}}}$, $\Delta W = W -
+\hat W$, and every covariance is an average over the calibration set (the
+normalisation cancels in the solver). Llama-3.2-1B has $n_h = 32$ query
+heads, $n_{kv} = 8$ key/value heads (each shared by $n_h/n_{kv} = 4$
+query heads), head dimension $d_h = 64$, $d = 2048$ and MLP width 8192.
+$W_{\cdot,h}$ denotes the $d_h$ rows of a projection that belong to head
+$h$.
+
+\paragraph{One-sided layers (o\_proj, gate, up, down).} The layer output
+error is $\|X\Delta W^\top\|_F^2$, so
+\begin{equation}
+  \mathcal{L}_{1s}(\Delta W) = \tr\big(\Delta W\,\Hin\,\Delta W^\top\big),
+  \qquad \Hin = X^\top X,
+  \label{eq:onesided}
+\end{equation}
+with $X$ the concatenated head outputs for o\_proj, the post-attention
+RMSNorm output for gate and up (which share one $\Hin$), and
+$\mathrm{SiLU}(XW_{\mathrm{gate}}^\top)\odot XW_{\mathrm{up}}^\top$ for
+down. This is the GPTQ objective.
+
+\paragraph{Value projection (v\_proj; one-sided, per-head Hessian).}
+Head $h$ of the attention output is $A_h X W_{v,h}^\top$ with $A_h \in
+\mathbb{R}^{L\times L}$ the (causal) softmax attention matrix of the
+quantised model, so the error that reaches the next layer is $A_h X\Delta
+W_{v,h}^\top$ and
+\begin{equation}
+\begin{aligned}
+  \mathcal{L}_v(\Delta W_v) &= \sum_{h=1}^{n_{kv}}
+  \tr\big(\Delta W_{v,h}\,\Hin^{(h)}\,\Delta W_{v,h}^\top\big),\\
+  \Hin^{(h)} &= X^\top A_h^\top A_h X,
+\end{aligned}
+\label{eq:value}
+\end{equation}
+where, under grouped-query attention, $A_h$ of a key/value head is the
+average over the four query heads that share it (\texttt{block\_v} in
+the solver).
+
+\paragraph{Query and key projections (q\_proj, k\_proj; two-sided).}
+Only the attention scores depend on $W_q$ and $W_k$. With RoPE, the score
+between positions $t$ and $s$ in head $h$ is $s_{ts} = (R_t W_{q,h}
+x_t)^\top (R_s W_{k,h} x_s)/\sqrt{d_h}$, where $R_t$ is the $d_h\times
+d_h$ rotation of position $t$. Perturbing $W_{q,h}$ changes every score
+in row $t$ by $\Delta s_{ts} = (R_t\Delta W_{q,h} x_t)^\top \tilde
+k_{h,s}$, with $\tilde k_{h,s} = R_s W_{k,h} x_s$ the post-RoPE key, and
+\begin{equation}
+\begin{aligned}
+  \sum_s \Delta s_{ts}^2 &= x_t^\top \Delta W_{q,h}^\top R_t^\top C_{K,h}
+  R_t \Delta W_{q,h} x_t,\\
+  C_{K,h} &= \sum_s \tilde k_{h,s}\tilde k_{h,s}^\top .
+\end{aligned}
+\label{eq:scores}
+\end{equation}
+Summing over $t$ and decoupling the position-dependent rotation from the
+input covariance (the BoA approximation)
+\begin{equation}
+\begin{aligned}
+  &\sum_t \tr\big(R_t^\top C R_t\,\Delta W x_t x_t^\top \Delta W^\top\big)\\
+  &\qquad\approx \tr\Big(\big(\tfrac{1}{L}\textstyle\sum_t R_t^\top C R_t\big)
+  \Delta W X^\top X \Delta W^\top\Big)
+\end{aligned}
+\label{eq:boaapprox}
+\end{equation}
+gives the two-sided objective
+\begin{align}
+  \mathcal{L}_q(\Delta W_q) &= \sum_{h=1}^{n_h}
+  \tr\big(\Hout^{(h)}\Delta W_{q,h}\Hin\Delta W_{q,h}^\top\big),\nonumber\\
+  \Hout^{(h)} &= \tfrac{1}{L}\textstyle\sum_{t=1}^{L} R_t^\top
+  C_{K,g(h)} R_t, \label{eq:lq}\\
+  \mathcal{L}_k(\Delta W_k) &= \sum_{h=1}^{n_{kv}}
+  \tr\big(\Hout^{(h)}\Delta W_{k,h}\Hin\Delta W_{k,h}^\top\big),\nonumber\\
+  \Hout^{(h)} &= \tfrac{1}{L}\textstyle\sum_{t=1}^{L} R_t^\top
+  \bar C_{Q,h} R_t, \label{eq:lk}
+\end{align}
+where $\Hin = X^\top X$ is the shared input covariance of q/k/v, $g(h)$
+is the key head serving query head $h$, and $\bar C_{Q,h}$ is the
+post-RoPE query covariance averaged over the four query heads that share
+key head $h$. The output-side factor is what makes these layers
+two-sided: an error in row $i$ of head $h$ is weighted by $\Hout^{(h)}$,
+not by the identity. The solver handles it with a row-side Cholesky
+factor $U_{\mathrm{out}}$ of $(\Hout^{(h)})^{-1}$ (after 1\% damping) and
+quantises rows in chunks of $n_r = 16$, applying the GPTQ column loop to
+each chunk and propagating the chunk's error to the remaining rows; the
+OBS weight of a chunk is $(U_{\mathrm{sub}}^\top U_{\mathrm{sub}})^{-1}$,
+whose diagonal is our row weight $r_i$ (Section~\ref{sec:inloop}).
+
+\paragraph{Input-difference correction.} Because earlier blocks are
+already quantised, the layer sees $\hat X = X - \Delta X$ at inference.
+TurboBoA minimises $\|XW^\top - \hat X\hat W^\top\|_F^2 = \tr(\Delta W
+\hat X^\top\hat X\Delta W^\top) + 2\tr(\Delta W\hat X^\top\Delta X
+W^\top) + \mathrm{const}$ with all Hessians above built from $\hat X$ and
+the cross term damped by $\alpha = 0.25$ (\texttt{consider\_dX}). The
+cross term is linear in $\Delta W$; in the column loop it shifts the
+compensated target of the not-yet-quantised columns (the $-wP_{j,j:}$
+term of the update) but does not depend on which grid level column $j$ is
+rounded to, so the loss increment of the rounding decision itself is the
+quadratic term alone: $(w_{ij} - \hat w_{ij})^2 d_j r_i$. That is the
+quantity our gain compares between the coarse and the fine level, and
+$N_\ell$ is the same quadratic form evaluated on $W$.
+
+\paragraph{Scale search.} Per group the solver picks $(s_c, z_c)$ by a
+grid search over shrink factors of the min--max range that minimises the
+Hessian-weighted error $\tr(\Delta W_g \Hin^{gg}\Delta W_g^\top)$ of the
+group's columns (\texttt{qparam\_comput=Hessian}); for the two-sided
+layers it repeats the search on each row chunk after the row-side
+compensation (\texttt{adaptive\_qparam}). We keep this search exactly as
+shipped and restrict it to the coarse grid.
+
+\subsection{Grouped quantization and side information}
+
+With group size $g$, each run of $g$ input columns in a row has a scale
+$s$ (16 bit) and an asymmetric zero $z$ ($b$ bits for a $b$-bit grid). At
+$g{=}128$ this adds $(16+b)/128 \approx 0.15$ bpw, so ``3-bit'' weights
+are 3.15 bpw nominally. All rates in this paper include it.
+
+\subsection{Entropy coding of code streams}
+
+Quantized codes are not uniformly distributed; Deep Compression
+\citep{han2016deepcompression} already Huffman-coded them. With a
+per-tensor table of $2^b$ code lengths the overhead is $4\cdot 2^b$ bits
+per tensor, negligible against $10^7$ codes. We report the ideal
+(Shannon) rate and the realised Huffman rate \citep{huffman1952}; an ANS
+coder \citep{duda2013ans} would approach the former, and
+Section~\ref{sec:bitstream} describes the decoder we actually built.
+
+\subsection{Nested lattices}
+
+A lattice $\Lambda_c$ is nested in $\Lambda_f$ if $\Lambda_c \subset
+\Lambda_f$ \citep{conway1982lattice}. For scalar uniform grids this is
+just ``the coarse step is a multiple of the fine step and the zeros
+coincide''. NestQuant \citep{savkin2025nestquant} uses nested $E_8$
+lattices for matrix-product quantization with one fixed lattice pair per
+tensor; Matryoshka-style methods
+\citep{nair2025matquant,kleinegger2026matgptq,park2024anyprecision} nest
+bit-widths by MSB slicing of a single master code so that one stored model
+can be served at several uniform precisions. We use nesting differently:
+to give individual elements one extra bit inside one code stream.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The nested-lattice representation}
+\label{sec:representation}
+
+\paragraph{Grids.} Fix a quantization group and let $(s_c, z_c)$ be the
+scale and zero found by the solver's own search on the $b$-bit grid ($b =
+3$ in the main experiment, $z_c \in \{0,\dots,2^b-1\}$). Define the
+coarse and fine quantizers
+\begin{equation}
+\begin{aligned}
+  q_c &= \mathrm{clamp}\big(\mathrm{round}(w/s_c) + z_c,\, 0,\, 2^b{-}1\big),\\
+  \mathrm{deq}_c &= s_c(q_c - z_c),\\
+  s_f &= s_c/2,\qquad z_f = 2z_c,\\
+  q_f &= \mathrm{clamp}\big(\mathrm{round}(w/s_f) + z_f,\, 0,\, 2^{b+1}{-}1\big),\\
+  \mathrm{deq}_f &= s_f(q_f - z_f).
+\end{aligned}
+\label{eq:grids}
+\end{equation}
+Every coarse level is a fine level: $s_c(q_c - z_c) = s_f(2q_c - z_f)$
+exactly, also in floating point, since halving a scale and doubling an
+integer are exact.
+
+\paragraph{Stored code.} Every element stores one $(b{+}1)$-bit integer
+$q \in \{0,\dots,2^{b+1}-1\}$: $q = 2q_c$ if the element is coarse, $q =
+q_f$ if it is refined. Dequantization is the same for all elements, $\hat
+w = s_f(q - z_f)$, so a kernel never branches on the mask; one scale and
+one $b$-bit zero per group are the only side information. The mask is
+implicit --- refined elements are those with odd $q$ or an even $q$ that
+happens to equal $2q_c$ (Section~\ref{sec:free}).
+
+\paragraph{Scale search stays on the coarse grid.} $(s_c, z_c)$ are
+searched on the $b$-bit grid on the original group, before any column of
+it is quantised, and $(s_f, z_f)$ are derived. Re-searching on the fine
+grid would break the nesting (the coarse levels would no longer be a
+subset), and we show in Section~\ref{sec:results} that the derived fine
+grid costs \tbd{+0.31 PPL (e4\_s0 vs.\ w4\_s0)} relative to a native
+$(b{+}1)$-bit search when every element is refined --- the price of the
+nesting, paid only by the refined 1\%.
+
+\paragraph{Rate.} Let $p_{\mathrm{odd}}$ be the fraction of odd codes.
+The code stream's entropy is at most $H(\text{coarse histogram}) +
+h_2(p_{\mathrm{odd}}) + p_{\mathrm{odd}}$ bits, i.e.\ the coarse cost plus
+a small term that vanishes as $p_{\mathrm{odd}}\to 0$; at
+$p_{\mathrm{odd}} = 1\%$ it is $\approx 0.09$ bpw. Per tensor we build
+one Huffman table over the $2^{b+1}$ symbols and add table bits, scales
+and zeros:
+\begin{equation}
+  \bpw_{\mathrm{Huff}} = \frac{\sum_\ell\Big(\sum_q n_\ell(q) L_\ell(q) +
+  2^{b+3} + G_\ell (16+b)\Big)}{\sum_\ell N_\ell},
+  \label{eq:rate}
+\end{equation}
+where $n_\ell(q)$ is the count of code $q$ in tensor $\ell$, $L_\ell(q)$
+its Huffman length, $G_\ell$ the number of groups and $N_\ell$ the
+number of elements. All comparisons in this paper are made at matched
+$\bpw_{\mathrm{Huff}}$; the Shannon rate is reported alongside.
+
+\subsection{Free elements}
+\label{sec:free}
+
+For a coarse element, refinement changes the stored value only if $q_f
+\neq 2q_c$, i.e.\ if the compensated weight lies closer to a fine level
+that is not a coarse level. For a weight uniformly distributed inside a
+coarse cell this happens with probability $1/2$. On Llama-3.2-1B we
+measure \tbd{51.4\% (e3\_s0)} of all elements to be ``free'': their
+fine code already equals $2q_c$, and refining them is a no-op that costs
+nothing and gains nothing. A selection rule that does not look at the
+residual --- any static sensitivity score --- cannot see this, and will
+spend roughly half its budget on free elements. This single observation
+is, we believe, the main reason the in-loop rule is competitive
+(Section~\ref{sec:results}).
+
+\begin{algorithm}[t]
+\caption{In-loop nested refinement inside a GPTQ-style column loop (one
+layer)}
+\label{alg:inloop}
+\begin{algorithmic}[1]
+\STATE build $\Hin$ (and $\Hout$ where the solver does); $U \leftarrow
+  \mathrm{chol}(\Hin^{-1})$; $d_j \leftarrow 1/U_{jj}^2$
+\STATE per group: search $(s_c, z_c)$ on the $b$-bit grid; $s_f
+  \leftarrow s_c/2$, $z_f \leftarrow 2z_c$
+\STATE $N_\ell \leftarrow \mathcal{L}(W)/\mathrm{numel}(W)$ (global-$\lambda$
+  rule only)
+\FOR{each row chunk (two-sided) or the whole tensor (one-sided)}
+  \STATE $r_i \leftarrow [(U_{\mathrm{sub}}^\top U_{\mathrm{sub}})^{-1}]_{ii}$
+    (two-sided) or $1$
+  \FOR{column $j$ in solver order, on the compensated $W$}
+    \STATE $w \leftarrow W_{:,j}$; compute $q_c, q_f$, $e_c = w -
+      \mathrm{deq}_c$, $e_f = w - \mathrm{deq}_f$
+    \STATE $\gain \leftarrow \max\big((e_c^2 - e_f^2)\, d_j\, r_i,\, 0\big)$
+      (vector over rows)
+    \STATE $\mathrm{refine} \leftarrow \textsc{Select}(\gain)$
+    \STATE $q \leftarrow \mathrm{refine}\ ?\ q_f : 2q_c$; $\hat w
+      \leftarrow s_f(q - z_f)$
+    \STATE $\mathrm{err} \leftarrow (w - \hat w)/U_{jj}$; propagate err
+      exactly as the solver does
+  \ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{In-loop refinement}
+\label{sec:inloop}
+
+Only the rounding call inside the column loop changes; the Hessian
+construction, Cholesky factorisation, block updates, the solver's
+input-difference correction and its per-group scale search are exactly
+as shipped (Algorithm~\ref{alg:inloop}).
+
+\paragraph{The gain.} At the moment column $j$ is rounded, the solver's
+loss increment for storing $\hat w$ in row $i$ is $(w_{ij} - \hat
+w_{ij})^2 d_j r_i$ under each of the objectives
+\eqref{eq:onesided}--\eqref{eq:lk} (Section~\ref{sec:objectives}). The
+gain of refining is the difference between the coarse and fine
+increments,
+\begin{equation}
+  \gain_{ij} = (e_c^2 - e_f^2)\, d_j\, r_i \;\ge\; 0,
+  \label{eq:gain}
+\end{equation}
+which is in the solver's own loss units and accounts for the error
+compensation already applied to $w$ by previous columns. Because
+$\Lambda_c \subset \Lambda_f$, $e_f^2 \le e_c^2$ except for clamp edge
+cases, which we clip to zero. The gain is zero exactly for free elements.
+
+\paragraph{Row weight $r_i$.} For the two-sided layers the loss is
+$\tr(\Hout E \Hin E^\top)$, Eqs.~\eqref{eq:lq}--\eqref{eq:lk}. With
+$\Hout^{-1} = U_{\mathrm{out}}^\top U_{\mathrm{out}}$ and rows quantised
+in chunks, the exact OBS weight of a chunk's error matrix $E$ is
+$\tr\big((U_{\mathrm{sub}}^\top U_{\mathrm{sub}})^{-1} E \Hin
+E^\top\big)$; the solver already forms $U_{\mathrm{sub}}^{-1}$ for its row
+update, so $r_i = \sum_k (U_{\mathrm{sub}}^{-1})_{ik}^2$ is free. It
+reduces to $1/U_{\mathrm{out},ii}^2$ for chunk size 1. We use the
+diagonal, i.e.\ we neglect the cross-row terms of the chunk, which is the
+same approximation the per-element loss increment makes in every
+one-sided solver.
+
+\paragraph{Layer normalisation.} Gains are not comparable across layers:
+they scale with the layer's Hessian magnitudes. We normalise by the
+solver's own loss functional evaluated on the unquantised weight itself,
+$N_\ell = \mathcal{L}_\ell(W_\ell)/\mathrm{numel}(W_\ell)$, computed once
+per layer from the same damped Hessians the solver uses ($\sum_h
+\tr(W_h\Hin W_h^\top)$ one-sided, $\sum_h \tr(\Hout W_h \Hin W_h^\top)$
+two-sided), so that $\gain/N_\ell$ is dimensionless in every layer.
+
+\paragraph{Selection rules (arms).}
+\begin{itemize}\itemsep 0pt
+\item \textbf{Arm A --- static Fisher (baseline).} $\mathrm{refine}_{ij}
+  = M_{ij}$, $M$ the per-tensor top-$p$ mask by the SqueezeLLM diagonal
+  Fisher $F_{ij} = \sum_n (\partial\mathcal{L}_n/\partial w_{ij})^2$ over
+  the same calibration set. Needs one full backward pass over the model.
+\item \textbf{Arm B --- in-loop, fixed per-layer $p$.} Top-$k$ gains per
+  column with $k_j = \lfloor pn(j{+}1)\rfloor - \lfloor pnj\rfloor$ (so
+  the mean is exactly $p$), requiring $\gain > 0$; over the rows present
+  in the solver call (whole tensor, or one row chunk for two-sided
+  layers).
+\item \textbf{Arm C --- in-loop, one global $\lambda$.}
+  $\mathrm{refine}_{ij} = [\gain_{ij}/N_\ell > \lambda]$ with one
+  $\lambda$ for the whole model. This is the rule we advocate: it
+  allocates the budget across layers.
+\item \textbf{Arm D --- hybrid.} As C with $\gain_{ij} \leftarrow
+  \gain_{ij} F_{ij}/\bar F_\ell$.
+\item \textbf{Endpoints.} E3: never refine ($\lambda = \infty$); E4:
+  always refine ($\lambda = 0$). Both run through the modified solver
+  and bracket every arm.
+\end{itemize}
+The error propagated is that of the single value actually stored; we do
+not propagate an average of the coarse and fine errors (MatGPTQ's rule,
+which optimises a different, multi-target objective).
+
+\subsection{Calibrating $\lambda$ on rate only}
+\label{sec:lambda}
+
+$\lambda$ is a rate knob and must never be tuned on test perplexity. Arm
+B logs $\gain/N_\ell$ for every element at no extra cost; from the
+model-wide empirical CDF we read off $\lambda$ at the quantile whose
+expected refined fraction equals the target $p$. One arm-C run then
+realises a rate; if it misses the target by more than 0.02 bpw we take a
+secant step in $\log\lambda$ and rerun, at most twice. Because the arm-C
+gains are computed on its own compensated weights, the realised fraction
+differs slightly from the B-predicted one (\tbd{0.996\% vs.\ 1.000\% at
+seed 0}); in our runs \tbd{zero} secant steps were needed. The same
+$\lambda$ is reused across calibration seeds and the rate drift is
+reported.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experimental protocol}
+\label{sec:protocol}
+
+\paragraph{Model and solver.} Llama-3.2-1B \citep{grattafiori2024llama3}
+(bf16, wiki2 PPL 9.751 at context 2048), quantised with TurboBoA
+\citep{kim2025boa} at its released Llama defaults with $g{=}128$:
+Hessian-weighted per-group scale search, attention-aware (two-sided)
+solves for q/k with row chunks of 16, block-diagonal per-head value
+Hessian, input-difference correction ($\alpha = 0.25$), 1\% damping, no
+activation ordering (forced off by the solver for $g \neq -1$). Nothing
+in this configuration is changed between arms.
+
+\paragraph{Calibration and evaluation.} 128 sequences of 2048 tokens from
+WikiText-2 train \citep{merity2017wikitext}, drawn by the solver's sampler
+with seeds 0, 1, 2 (the same seed gives the same set to every arm). Test
+perplexity on WikiText-2 test and C4-new \citep{raffel2020c4} at context
+2048. The Fisher for arm A is accumulated in fp32 over the same 128
+sequences of the same seed, on the transformer-block linears only.
+
+\paragraph{Rate accounting and matching.} Per tensor one Huffman table
+over the $2^{b+1}$ symbols ($2^b$ for native $b$-bit runs, which is the
+fair rate for pure $b$-bit) plus table bits, 16-bit scales and $b$-bit
+zeros per group; the script is solver-independent and takes only the
+integer codes and group parameters. The rate target $R_1$ is the Huffman
+bpw of arm A at $p = 1\%$, seed 0; arms B and C adjust $p/\lambda$ to
+$R_1 \pm 0.02$, on rate only. A second point $R_2$ at $p \approx 4\%$
+draws the rate--distortion line.
+
+\paragraph{Decision rule (pre-registered).} With $\mu$ the mean over
+three seeds and $\sigma$ the pooled seed-to-seed standard deviation of A,
+B, C: PASS if $\mu_C - \mu_A \le -\max(2\sigma, 0.05)$ PPL; PARTIAL if
+$|\mu_B - \mu_A| \le \sigma$ or $|\mu_C - \mu_A| \le \sigma$ (in-loop
+matches Fisher at zero gradient cost); FAIL otherwise.
+
+\paragraph{Correctness gates.} (a) E3 must be bit-identical to the native
+$b$-bit run: codes equal $2\times$ the native codes, identical scales and
+zeros, identical perplexity --- this proves the modified loop is a no-op
+when nothing is refined. (b) E4 must be within a small margin of native
+$(b{+}1)$-bit (the derived fine grid is not a native search). (c) Native
+$b$-bit and $(b{+}1)$-bit rates must differ by $\approx 1$ bpw under the
+accounting. (d) Arm B's perplexity must lie between E3 and E4, its
+realised fraction must equal the target, and every refined element must
+have positive gain.
+
+\subsection{Experiments to run}
+
+Table~\ref{tab:plan} (Appendix~\ref{app:plan}) lists every run the paper
+needs, its purpose, and its status at the time of writing; the run tags
+are the directory names under \texttt{results/runs/} in the artifact.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+\label{sec:results}
+
+\subsection{Endpoints and gates}
+\label{sec:endpoints}
+
+\tbd{Fill from results/SUMMARY.md ``Phase 0/1''.} Native W3:
+\tbd{12.011 wiki2, 2.996 bpw (w3\_s0)}; native W4: \tbd{10.224, 3.902
+(w4\_s0)}. E3 is bit-identical to W3 (\tbd{0 of 973,078,528 codes
+differ, identical scales/zeros, identical PPL}) --- gate (a). E4:
+\tbd{10.533 at 3.982 bpw}, i.e.\ \tbd{+0.31} PPL above native W4 --- gate
+(b), the price of the derived fine grid. The rate accounting places W3
+and W4 \tbd{0.906} bpw apart --- gate (c). Both native rates sit above the
+2.6--2.9 / 3.3--3.6 ranges one might expect from peaked histograms:
+TurboBoA's Hessian-weighted scale search uses the full code range, so its
+histograms are broad and there is little entropy to remove from a pure
+$b$-bit stream; the entropy saving in our scheme comes from the nesting,
+not from the base quantizer.
+
+\subsection{Main comparison at matched rate}
+\label{sec:main}
+
+Table~\ref{tab:main} is the main result. \tbd{One paragraph: $\mu_A$,
+$\mu_B$, $\mu_C$, $\sigma$, the decision (PASS/PARTIAL/FAIL) under the
+pre-registered rule, and the C4 numbers as a second metric. State the
+rate drift of B and C across seeds at fixed $p/\lambda$.}
+
+\begin{table*}[t]
+\caption{Llama-3.2-1B, TurboBoA $g{=}128$, matched Huffman rate $R_1 \pm
+0.02$. PPL at context 2048; mean $\pm$ std over calibration seeds 0/1/2
+where three seeds exist. Nominal bpw includes the 0.15 bpw of
+scales/zeros.}
+\label{tab:main}
+\vskip 0.1in
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccccccc}
+\toprule
+Arm & selection & $p/\lambda$ & seeds & nominal & ideal bpw & Huffman bpw & wiki2 PPL & C4 PPL & extra pass \\
+\midrule
+FP16 & -- & -- & -- & 16 & -- & -- & 9.751 & 14.02 & -- \\
+native W3 & -- & -- & 0 & 3.15 & \tbd{2.966} & \tbd{2.996} & \tbd{12.011} & \tbd{20.115} & -- \\
+native W4 & -- & -- & 0 & 4.16 & \tbd{3.875} & \tbd{3.902} & \tbd{10.224} & \tbd{15.428} & -- \\
+E3 & never & $\infty$ & 0 & 4.15 & \tbd{2.966} & \tbd{2.996} & \tbd{12.011} & \tbd{20.115} & -- \\
+E4 & always & 0 & 0 & 4.15 & \tbd{3.946} & \tbd{3.982} & \tbd{10.533} & \tbd{16.346} & -- \\
+A & Fisher top-1\% / tensor & 1\% & 0,1,2 & 4.15 & \tbd{3.008} & \tbd{3.071 $= R_1$} & \tbd{$\mu\pm\sigma$} & \blank & backward \\
+B & in-loop top-$k$ / column & \tbd{1\%} & 0,1,2 & 4.15 & \tbd{3.027} & \tbd{3.076} & \tbd{$\mu\pm\sigma$} & \blank & none \\
+C & in-loop global $\lambda$ & \tbd{0.0759} & 0,1,2 & 4.15 & \tbd{3.031} & \tbd{3.086} & \tbd{$\mu\pm\sigma$} & \blank & none \\
+D & $(\gain\cdot F) > \lambda$ & \blank & 0,1,2 & 4.15 & \blank & \blank & \blank & \blank & backward \\
+A-ref & existing pipeline (different solver) & 1\% & -- & -- & -- & \tbd{2.6} & \blank & -- & backward \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
+\paragraph{Odd codes vs.\ refined elements.} Arm A refines exactly
+1.000\% of every tensor but only \tbd{0.46\%} of its codes end up odd:
+\tbd{54\%} of the Fisher picks are free elements
+(Section~\ref{sec:free}). Arms B and C, which require $\gain > 0$,
+produce \tbd{$\approx 2\times$} the odd codes at the same refined
+fraction. This is why we match on rate: at matched Huffman rate the
+in-loop arms store \tbd{twice} as many effective refinements as the
+Fisher arm for the same bits. (A caveat we report: integer Huffman
+lengths do not resolve a 0.5\% change in the odd-symbol mass, so B/C's
+Shannon rate is \tbd{0.02} bpw above A's while their Huffman rates agree
+to \tbd{0.005}; an ANS coder would make the comparison slightly less
+favourable to B/C by that amount.)
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig1_refined_fraction.png}
+\caption{Refined fraction per layer, seed 0, arms A/B/C at matched rate.
+\tbd{Regenerate with C included: \texttt{scripts/figs.py --A A\_p1\_s0
+--B B\_p1\_s0 --C C\_l0.0759\_s0}.}}
+\label{fig:alloc}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig2_jaccard.png}
+\caption{Jaccard(A-mask, B-mask) per layer, seed 0.}
+\label{fig:jaccard}
+\end{figure}
+
+\paragraph{Where the budget goes.} Figure~\ref{fig:alloc} shows the
+refined fraction per layer. Arm B is flat by construction. Arm C, with
+one global $\lambda$, gives the query/key projections \tbd{$\approx
+0.005\%$} and spends the budget on the output and down projections
+(\tbd{up to 3.9\%} in the middle blocks), yet ends \tbd{lowest} in
+perplexity: the two-sided loss weight reports that fine-grid errors in
+q/k are cheap relative to those layers' own loss scale. \tbd{Confirm with
+the $N_\ell = 1$ ablation (4c) whether the normalisation is what makes
+this allocation work.}
+
+\paragraph{The two rules pick different weights.} The per-layer Jaccard
+index between the Fisher mask and the in-loop mask is \tbd{0.009 mean,
+0.047 max} (Figure~\ref{fig:jaccard}) --- chance level for two 1\% masks
+is $\approx 0.005$. The two criteria are nearly independent, and both
+help; the in-loop one helps more per stored bit.
+
+\paragraph{Rate--distortion.} Figure~\ref{fig:rd} places every run on the
+(Huffman bpw, PPL) plane. \tbd{Add the $R_2$ point (4b) and the 2$\to$3-bit
+runs; the line from E3 through A/B/C at $R_1$ and $R_2$ toward E4 is the
+deliverable.}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\columnwidth]{figs/fig3_rate_distortion.png}
+\caption{Rate--distortion, Llama-3.2-1B. \tbd{Regenerate with C, $R_2$
+and the 2-bit runs.}}
+\label{fig:rd}
+\end{figure}
+
+\subsection{Ablations}
+
+\paragraph{Fisher on top of the gain (arm D).} \tbd{Table row + one
+sentence: does multiplying the in-loop gain by the Fisher change the
+outcome? If D $\approx$ C, the gradient pass buys nothing.}
+
+\paragraph{Layer normalisation ($N_\ell = 1$).} \tbd{One sentence: rate
+and PPL of arm C with raw gains and the same target rate; per-layer
+allocation plot.}
+
+\paragraph{Second rate point $R_2$.} \tbd{A/B/C at $p \approx 4\%$: does
+the gap persist / widen with budget?}
+
+\subsection{One level down: 2$\to$3 bits}
+
+The construction is bit-width agnostic; we repeat phases 0--3 with a
+2-bit coarse grid and a 3-bit fine grid (codes 0..7, $s_f = s_c/2$, $z_f
+= 2z_c$), seed 0, $p = 1\%$. \tbd{One paragraph. Expectation: the 2-bit
+base is far lossier, so 1\% refinement moves PPL less in relative terms
+and the free fraction may differ; report whether the ordering A/B/C is
+preserved.}
+
+\begin{table}[t]
+\caption{2$\to$3-bit nesting, Llama-3.2-1B, seed 0.}
+\label{tab:2to3}
+\vskip 0.1in
+\centering
+\footnotesize
+\begin{tabular}{lccc}
+\toprule
+Arm & Huff.\ bpw & wiki2 & C4 \\
+\midrule
+native W2 & \blank & \blank & \blank \\
+E2 (coarse only) & \blank & \blank & \blank \\
+E3 (all fine, derived) & \blank & \blank & \blank \\
+native W3 & \tbd{2.996} & \tbd{12.011} & \tbd{20.115} \\
+A (Fisher 1\%) & \blank & \blank & \blank \\
+B (in-loop top-$k$) & \blank & \blank & \blank \\
+C (in-loop global $\lambda$) & \blank & \blank & \blank \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cost}
+\label{sec:cost}
+
+The in-loop rule adds \tbd{$\approx 150$ s} of per-column Python
+bookkeeping to a \tbd{1060 s} solve on one A100 (all of it logging; the
+selection itself is a top-$k$ or a compare on a vector of $\le 2048$
+elements per column) and removes the Fisher pass (\tbd{25 s} on an A100
+for a 1B model, but a full backward pass over the model with a 12.7 GB
+peak, which for larger models is the step that no longer fits next to
+the solver).
+
+% ---- new multi-model sections (6.6 - 6.11) ----
+\input{sec6_extended}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Bitstream format and encoder}
+\label{sec:bitstream}
+
+\teammate{Write this section. It must specify: (i) the on-disk/in-memory
+layout of a quantised tensor: per-tensor Huffman table ($2^{b+1}$ code
+lengths, canonical Huffman), per-group 16-bit scale and $b$-bit zero, the
+coded stream and its block/chunk structure for random access (e.g.\ one
+independently decodable chunk per $N$ rows or per tile so that a GEMM
+tile never spans two chunks); (ii) how the code stream is produced from
+the solver's integer codes (\texttt{results/runs/<tag>/layers.*.npz}:
+codes uint8 $[d_{\mathrm{out}}, d_{\mathrm{in}}]$, scale fp32
+$[d_{\mathrm{out}}, n_{\mathrm{groups}}]$, zero uint8, bits, zero\_bits);
+(iii) the exact bits-per-weight of the format including all headers, and
+how close it is to the Huffman number reported in Table~\ref{tab:main}
+(the paper's rate axis); (iv) whether an ANS/rANS variant is used or
+considered and its rate vs.\ decode-speed trade-off; (v) the choice of
+the fine/coarse zero and scale precision.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Decoder and fused dequantisation kernels}
+\label{sec:kernels}
+
+\teammate{Write this section. It must cover: (i) the Huffman decode
+strategy on GPU (table-driven canonical decode, bits consumed per step,
+warp-level parallelism, how chunk boundaries give independent decode
+streams); (ii) the fused decode $\to$ dequantise ($\hat w = s_f(q -
+z_f)$, no branch on refinement) $\to$ GEMV/GEMM kernel for the
+memory-bound decode phase, and how it compares to a 4-bit packed kernel
+(e.g.\ Marlin \citep{frantar2025marlin}, LUT-GEMM
+\citep{park2024lutgemm}) that reads 4 bits/weight; (iii) the prefill path
+(decode once to a 4-bit packed buffer vs.\ decode on the fly); (iv)
+integration into the serving stack used for the measurements; (v) any
+restrictions the kernel imposes on the format (alignment, chunk size)
+that had to be fed back into Section~\ref{sec:bitstream}.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Systems evaluation}
+\label{sec:sysval}
+
+\subsection{Llama-3.2-1B on one GPU}
+
+\teammate{Write this subsection. Required measurements: (i) kernel
+micro-benchmarks --- decode throughput (weights/s and GB/s of compressed
+bytes read) vs.\ a 4-bit packed baseline and vs.\ fp16, for the layer
+shapes of Llama-3.2-1B; (ii) end-to-end tokens/s at batch 1 and small
+batches, fp16 vs.\ 4-bit vs.\ this format, on \tbd{GPU(s)}; (iii) model
+memory footprint on device; (iv) the compression/encode time; (v) a
+breakdown showing whether Huffman decode is hidden under the memory-bound
+GEMV or adds latency, and at what batch size it stops being hidden.
+Include a table and one figure.}
+
+% ---- new systems-at-scale subsection (9.2) ----
+\input{sec9_extended}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Error-compensating PTQ.} OBS \citep{hassibi1993obs}, OBC
+\citep{frantar2022obc} and GPTQ \citep{frantar2023gptq} are the lineage of
+the column loop we modify; AWQ \citep{lin2024awq} and OmniQuant
+\citep{shao2024omniquant} act on scales rather than rounding, and GPTAQ
+\citep{li2025gptaq} corrects the calibration target. BoA/TurboBoA
+\citep{kim2025boa} adds an output-side Hessian for attention projections;
+our row weight $r_i$ comes from it.
+
+\paragraph{Element- and group-level mixed precision.} SpQR
+\citep{dettmers2024spqr} detects outliers in-loop from the OBS error but
+stores them as an explicit FP16 sparse structure; our score is the
+difference $e_c^2 - e_f^2$, not $e_c^2$, and the refined values live in
+the same code stream. SqueezeLLM \citep{kim2024squeezellm} and OWQ
+\citep{lee2024owq} select by static sensitivity outside the solver (our
+arm A); SliM-LLM \citep{huang2024slimllm} assigns bit-widths per group by
+salience; GuidedQuant \citep{kim2025guidedquant} weights layer-wise
+objectives by end-loss gradients. LLM.int8() \citep{dettmers2022llmint8}
+separates outlier columns.
+
+\paragraph{Nested and Matryoshka codes.} NestQuant
+\citep{savkin2025nestquant} uses a fixed nested $E_8$ pair per tensor
+with no per-element choice. Matryoshka Quantization
+\citep{nair2025matquant}, Any-Precision LLM \citep{park2024anyprecision}
+and MatGPTQ \citep{kleinegger2026matgptq} store one master code per
+element and serve lower precisions by MSB slicing; MatGPTQ chooses the
+master code by brute force over the weighted sum of errors at all target
+widths, propagates the average error, and varies precision per layer via
+EvoPress \citep{sieberling2024evopress}. None chooses a width per
+element, keeps a per-element mask, or uses the nesting for entropy coding;
+MatGPTQ's MSB slice $\mathrm{round}(q/2^{c-r})\,2^{c-r}$ is the same
+sub-lattice as our even codes, so MatGPTQ-EP at $\approx 3.0$--$3.25$ bpw
+is the natural baseline row (Table~\ref{tab:published}).
+
+\paragraph{Vector and lattice quantization.} QuIP\#
+\citep{tseng2024quipsharp}, QTIP \citep{tseng2024qtip}, AQLM
+\citep{egiazarian2024aqlm} and GPTVQ \citep{vanbaalen2024gptvq} reach
+lower rates with codebooks and incoherence processing, at the cost of a
+lookup-based kernel; our scheme is orthogonal (it changes only which
+scalar level is stored) and keeps a multiply--add dequantiser.
+
+\paragraph{Entropy coding of weights.} Deep Compression
+\citep{han2016deepcompression} Huffman-coded codebook indices after
+clustering; DFloat11 \citep{zhang2025dfloat11}, NeuZip
+\citep{hao2024neuzip} and ZipNN \citep{hershcovitch2024zipnn} entropy-code
+floating-point exponents losslessly, and ZipServ \citep{zipserv2026} and
+\citet{shannonbound2026} fuse the decode into the GEMM. We entropy-code a
+stream whose low entropy is designed in by the nesting.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\label{sec:conclusion}
+
+A 3-bit grid nested in a 4-bit grid lets a PTQ solver give individual
+weights one extra bit with no mask, no index and no second scale, and
+lets the solver itself decide which weights get it, from the error weight
+it already computes on the residual it already holds. At matched
+entropy-coded rate the in-loop rule \tbd{matches/beats} a static Fisher
+mask on Llama-3.2-1B while removing the gradient pass, and one global
+threshold allocates the budget across layers. \tbd{One sentence on the
+2-bit result.} \tbd{One sentence on 3B/8B and the other families.}
+\teammate{One sentence on the systems result.} Limitations: we evaluated
+one solver family within a fixed compute budget; the derived fine grid
+costs \tbd{0.3} PPL relative to a native search when all weights are
+refined, which bounds the benefit at large budgets; Huffman rate matching
+is coarse at the 0.01 bpw level; and \tbd{the 70B point is not budgeted
+/ was run on arms E3/A/C only}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{refs}
+\bibliographystyle{mlsys2025}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MLSys: the appendix is uploaded as a separate file. Keep it here for
+% drafting; split at submission time.
+\newpage
+\appendix
+\onecolumn
+
+\section{Experiment plan}
+\label{app:plan}
+
+\begin{table}[h]
+\caption{Experiment plan. Seed = calibration seed. Status: $\checkmark$
+done, $\circ$ running/queued, -- not started. Run tags are directory
+names under \texttt{results/runs/} in the artifact.}
+\label{tab:plan}
+\vskip 0.1in
+\centering
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{clllc}
+\toprule
+Phase & Run(s) & Purpose & Seeds & Status \\
+\midrule
+0 & w3\_s0, w4\_s0 & native 3/4-bit reference, wall-clock & 0 & $\checkmark$ \\
+1 & e3\_s0, e4\_s0 & endpoints; gates (a)--(c) & 0 & $\checkmark$ \\
+2 & Fisher; A\_p1\_s0; B\_p1\_s0 & $R_1$; in-loop top-$k$ at $R_1$; Jaccard(A,B); gain histograms & 0 & $\checkmark$ \\
+3 & $\lambda$ from B's CDF; C\_l*\_s0; A/B/C seeds 1, 2 & main table; pre-registered decision rule & 0,1,2 & \tbd{$\circ$ seed 2 pending} \\
+4a & arm D at $R_1$ & does Fisher add anything on top of the in-loop gain? & 0,1,2 & -- \\
+4b & A/B/C at $R_2$ ($p \approx 4\%$) & two-point rate--distortion line & 0 & -- \\
+4c & arm C with $N_\ell = 1$ & is layer normalisation what makes one global $\lambda$ work? & 0 & -- \\
+5 & 2$\to$3-bit mirror of phases 0--3 (w2, E2/E3 endpoints, A, B, C) & does the rule transfer one level down? & 0 & -- \\
+6 & $g = -1$ (per-channel) point for E3/A/B/C & robustness to the grouping choice (needs act-order support for the mask) & 0 & to decide \\
+7 & Llama-3.2-3B / Llama-3.1-8B, phases 0--3 & scaling; recovery ratio (Section~\ref{sec:scaling}) & 0 & -- \\
+8 & zero-shot tasks (lm-eval) for the final A/B/C checkpoints & downstream sanity (Section~\ref{sec:zeroshot}) & 0 & -- \\
+9 & OPT-6.7B, Mistral-7B-v0.3, Qwen3-8B: E3/A/C & other families; BoA / MatGPTQ cross-check (Section~\ref{sec:families}) & 0 & -- \\
+10 & Llama-2-7B/13B full pipeline; baseline re-runs (GPTQ, AWQ, SliM-LLM, GPTAQ); rate script on their codes & published comparison (Section~\ref{sec:published}) & 0 & -- \\
+11 & sensitivity blocks ($p$ sweep, $g$, calibration, solver, $r_i$-in-gain, A$'$, coder) & reviewer questions (Section~\ref{sec:sensitivity}) & 0 & -- \\
+12 & cost table across sizes & scaling argument (Section~\ref{sec:cost-scale}) & 0 & -- \\
+S & \teammate{kernel microbenchmarks, end-to-end decode throughput, memory} & systems half & -- & -- \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\section{Reproducibility}
+\label{app:repro}
+
+\tbd{Artifact: repository layout (\texttt{turboboa/} vendored solver with
+the flag-guarded patch, \texttt{scripts/} one script per step,
+\texttt{results/} per-run JSON + SUMMARY.md), exact commands from
+HANDOFF.md, hardware (1$\times$ A100-PCIE-40GB, torch 2.6.0+cu124,
+transformers 4.53.0), wall-clock per run ($\approx$ 20 min quant + 3 min
+eval).}
+
+\section{Additional figures}
+\label{app:figs}
+
+\tbd{Gain histograms per layer (log $x$), free fraction per layer,
+per-layer table (refined fraction, ideal entropy, Huffman bpw, $N_\ell$,
+wall time) for the final A/B/C runs. Per-layer allocation of arm C at 3B
+and 8B (Figure~\ref{fig:alloc-scale} data). Full lm-eval per-task tables
+behind Table~\ref{tab:zeroshot}.}
+
+\input{app_sensitivity}
+
+\section{Rate accounting details}
+\label{app:rate}
+
+\tbd{Worked example of Eq.~\eqref{eq:rate} on one tensor: histogram,
+Huffman lengths, table bits, scale/zero bits; the same for a native
+3-bit tensor with an 8-symbol table; and the tANS rate for the same
+stream.}
+
+\end{document}
